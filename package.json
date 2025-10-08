@@ -1,0 +1,38 @@
+{
+  "name": "mcp-scaudit",
+  "version": "0.1.0",
+  "description": "A Model Context Protocol (MCP) server for auditing smart contracts using Slither, Aderyn, and other tools",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "mcp-scaudit": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "smart-contract",
+    "audit",
+    "security",
+    "slither",
+    "aderyn",
+    "blockchain"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
