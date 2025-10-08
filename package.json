@@ -7,6 +7,13 @@
   "bin": {
     "mcp-scaudit": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "QUICKSTART.md",
+    "examples"
+  ],
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
@@ -16,15 +23,32 @@
   },
   "keywords": [
     "mcp",
+    "model-context-protocol",
     "smart-contract",
     "audit",
     "security",
     "slither",
     "aderyn",
-    "blockchain"
+    "mythril",
+    "blockchain",
+    "ethereum",
+    "solidity",
+    "vyper",
+    "static-analysis",
+    "vulnerability",
+    "claude",
+    "ai"
   ],
   "author": "",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/italoag/mcp-scaudit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/italoag/mcp-scaudit/issues"
+  },
+  "homepage": "https://github.com/italoag/mcp-scaudit#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4"
   },
