@@ -13,3 +13,23 @@ states/
 # Optional
 .env
 .env.local
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build output
+dist/
+build/
+
+# Docker
+.docker/
+docker-compose.override.yml
+contracts/
+
+# Test contracts (for local testing)
+test-contracts/

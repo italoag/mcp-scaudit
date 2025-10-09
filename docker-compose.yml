@@ -1,0 +1,45 @@
+services:
+  mcp-scaudit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mcp-scaudit:latest
+    container_name: mcp-scaudit
+    stdin_open: true
+    tty: true
+    volumes:
+      # Mount a directory for contracts to audit
+      - ./contracts:/contracts:ro
+      # Optional: Mount custom configurations
+      - ./config:/config:ro
+    environment:
+      - NODE_ENV=production
+    # For interactive use with stdio
+    command: node dist/index.js
+    restart: unless-stopped
+
+  # Development version with hot reload
+  mcp-scaudit-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: rust-builder
+    image: mcp-scaudit:dev
+    container_name: mcp-scaudit-dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./contracts:/contracts:ro
+    working_dir: /app
+    environment:
+      - NODE_ENV=development
+    command: npm run watch
+    restart: unless-stopped
+    profiles:
+      - dev
+
+networks:
+  default:
+    name: mcp-scaudit-network
