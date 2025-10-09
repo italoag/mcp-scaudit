@@ -3,6 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # Add build arguments for better control
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+      # Add network mode for better connectivity
+      network: host
     image: mcp-scaudit:latest
     container_name: mcp-scaudit
     stdin_open: true
