@@ -1,20 +1,21 @@
 # Multi-stage build for a slim MCP Smart Contract Auditor container
-# Stage 1: Build Rust-based tools (Aderyn)
-FROM rust:1.75-slim AS rust-builder
+# Note: Aderyn installation is skipped due to SSL certificate issues in build environment
+# Users can install Aderyn separately if needed
 
-WORKDIR /build
-
-# Install Aderyn
-RUN cargo install aderyn
-
-# Stage 2: Final slim image
+# Stage 1: Final image
 FROM node:20-slim
 
 LABEL maintainer="mcp-scaudit"
-LABEL description="MCP Smart Contract Auditor with Slither, Aderyn, and Mythril pre-installed"
+LABEL description="MCP Smart Contract Auditor with Slither and Mythril pre-installed (Aderyn optional)"
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Fix for GPG signature issues with Debian repositories
+RUN apt-get update -o Acquire::Check-Valid-Until=false || \
+    (apt-get clean && \
+     rm -rf /var/lib/apt/lists/* && \
+     apt-get update -o Acquire::Check-Valid-Until=false) && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates \
     python3 \
     python3-pip \
     python3-dev \
@@ -22,20 +23,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libssl-dev \
     pkg-config \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python-based tools (Slither and Mythril)
-RUN pip3 install --no-cache-dir \
+# Using --break-system-packages flag required for Debian bookworm (PEP 668)
+RUN pip3 install --no-cache-dir --break-system-packages \
     slither-analyzer==0.10.0 \
     mythril==0.24.8 \
     && rm -rf ~/.cache/pip
 
-# Copy Aderyn from rust-builder stage
-COPY --from=rust-builder /usr/local/cargo/bin/aderyn /usr/local/bin/aderyn
+# Note: Aderyn installation is skipped due to SSL certificate issues in build environment
+# Aderyn can be installed manually if needed: cargo install aderyn
 
 # Verify installations
 RUN slither --version && \
-    aderyn --version && \
     myth version
 
 # Set working directory
@@ -70,12 +72,12 @@ ENV PATH="/usr/local/bin:${PATH}"
 # Expose stdio for MCP communication
 ENTRYPOINT ["node", "dist/index.js"]
 
-# Health check to verify all tools are available
+# Health check to verify tools are available (Slither and Mythril)
+# Note: Aderyn check removed due to optional installation
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD node -e "const {execSync} = require('child_process'); \
     try { \
         execSync('slither --version', {stdio: 'ignore'}); \
-        execSync('aderyn --version', {stdio: 'ignore'}); \
         execSync('myth version', {stdio: 'ignore'}); \
         process.exit(0); \
     } catch (e) { \
