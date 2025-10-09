@@ -1,6 +1,6 @@
 # mcp-scaudit
 
-A Model Context Protocol (MCP) server for auditing smart contracts using industry-standard tools like Slither, Aderyn, Mythril, and custom pattern analysis.
+A Model Context Protocol (MCP) server for auditing smart contracts using industry-standard tools like Slither, Mythril, Aderyn (optional), and custom pattern analysis.
 
 ## Overview
 
@@ -9,8 +9,8 @@ This MCP server provides a unified interface for running multiple smart contract
 ## Features
 
 - **Slither Integration**: Static analysis framework for Solidity & Vyper
-- **Aderyn Integration**: Rust-based static analyzer for Solidity
 - **Mythril Integration**: Symbolic execution analysis for vulnerability detection
+- **Aderyn Integration**: Rust-based static analyzer for Solidity (optional, not pre-installed in Docker)
 - **Pattern Analysis**: Custom pattern-based security checks for common vulnerabilities
 - **Contract Reading**: Read and inspect contract source code
 - **Tool Management**: Check which audit tools are installed and get installation instructions
@@ -37,10 +37,11 @@ make build-retry  # Automatically handles network issues
 ```
 
 **Advantages:**
-- ✅ All tools (Slither, Aderyn, Mythril) pre-installed
+- ✅ Slither and Mythril pre-installed
 - ✅ Consistent environment across all platforms
 - ✅ No dependency conflicts
-- ✅ Optimized slim image (~800MB-1GB)
+- ✅ Optimized slim image (~1.3-1.4GB)
+- ⚠️ Aderyn not pre-installed (can be added manually if needed)
 
 See [DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
 

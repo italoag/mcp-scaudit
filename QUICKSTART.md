@@ -28,7 +28,9 @@ Configure Claude Desktop:
 }
 ```
 
-**Benefits:** ✅ Slither, Aderyn, and Mythril pre-installed | ✅ No dependency issues | ✅ Works everywhere
+**Benefits:** ✅ Slither and Mythril pre-installed | ✅ No dependency issues | ✅ Works everywhere
+
+**Note:** Aderyn is not pre-installed in Docker due to build environment issues, but Slither and Mythril provide comprehensive coverage.
 
 See [DOCKER.md](DOCKER.md) for detailed Docker setup.
 
@@ -72,7 +74,7 @@ Ask Claude:
 
 This will run the `check_tools` function and show which tools are installed.
 
-**With Docker:** All tools (Slither, Aderyn, Mythril) will be available ✅  
+**With Docker:** Slither and Mythril will be available (Aderyn not pre-installed) ✅  
 **Without Docker:** Only pattern_analysis available unless you install tools separately
 
 ### 2. Run Pattern Analysis (No Additional Tools Needed)
