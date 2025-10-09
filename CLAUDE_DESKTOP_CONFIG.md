@@ -15,7 +15,58 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 
 ## Configuration Options
 
-### Option 1: Using npx (Recommended for local development)
+### Option 1: Using Docker (Recommended - All Tools Pre-installed) 🐳
+
+**Best option for having all audit tools (Slither, Aderyn, Mythril) pre-installed:**
+
+```json
+{
+  "mcpServers": {
+    "scaudit": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "mcp-scaudit:latest"],
+      "cwd": "/absolute/path/to/mcp-scaudit"
+    }
+  }
+}
+```
+
+**Note for Windows users:** Replace `${PWD}` with `%CD%`:
+```json
+{
+  "mcpServers": {
+    "scaudit": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "mcp-scaudit:latest"],
+      "cwd": "C:\\path\\to\\mcp-scaudit"
+    }
+  }
+}
+```
+
+### Option 2: Using Docker Compose (Recommended Alternative)
+
+```json
+{
+  "mcpServers": {
+    "scaudit": {
+      "command": "docker-compose",
+      "args": ["run", "--rm", "mcp-scaudit"],
+      "cwd": "/absolute/path/to/mcp-scaudit"
+    }
+  }
+}
+```
+
+**Benefits:**
+- ✅ All tools pre-installed (Slither, Aderyn, Mythril)
+- ✅ No dependency conflicts
+- ✅ Consistent environment
+- ✅ Easy updates with `docker-compose pull`
+
+See [DOCKER.md](DOCKER.md) for detailed Docker setup.
+
+### Option 3: Using npx (No Docker - Tools Need Manual Installation)
 
 ```json
 {
@@ -28,7 +79,7 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 }
 ```
 
-### Option 2: Using global installation
+### Option 4: Using global installation
 
 If you've installed the package globally with `npm install -g mcp-scaudit`:
 
@@ -42,7 +93,7 @@ If you've installed the package globally with `npm install -g mcp-scaudit`:
 }
 ```
 
-### Option 3: Using local repository (for development)
+### Option 5: Using local repository (for development)
 
 If you're developing or testing locally:
 

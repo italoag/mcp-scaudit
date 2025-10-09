@@ -17,12 +17,36 @@ This MCP server provides a unified interface for running multiple smart contract
 
 ## Installation
 
-### Prerequisites
+### Option 1: Docker (Recommended - All Tools Pre-installed) 🐳
+
+Use Docker for a hassle-free setup with all audit tools pre-installed:
+
+```bash
+# Clone the repository
+git clone https://github.com/italoag/mcp-scaudit.git
+cd mcp-scaudit
+
+# Build and run with Docker Compose
+docker-compose build
+docker-compose run --rm mcp-scaudit
+```
+
+**Advantages:**
+- ✅ All tools (Slither, Aderyn, Mythril) pre-installed
+- ✅ Consistent environment across all platforms
+- ✅ No dependency conflicts
+- ✅ Optimized slim image (~800MB-1GB)
+
+See [DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
+
+### Option 2: npm/npx Installation
+
+#### Prerequisites
 
 - Node.js 18.0.0 or higher
 - npm or yarn
 
-### Install the MCP Server
+#### Install the MCP Server
 
 ```bash
 npm install -g mcp-scaudit
@@ -37,21 +61,21 @@ npm install
 npm run build
 ```
 
-### Install Audit Tools (Optional)
+#### Install Audit Tools (Optional)
 
 The server works with various external audit tools. Install the ones you need:
 
-#### Slither
+**Slither:**
 ```bash
 pip install slither-analyzer
 ```
 
-#### Aderyn
+**Aderyn:**
 ```bash
 cargo install aderyn
 ```
 
-#### Mythril
+**Mythril:**
 ```bash
 pip install mythril
 ```
@@ -60,7 +84,21 @@ You can check which tools are installed using the `check_tools` command.
 
 ## Usage
 
-### Running the Server
+### With Docker
+
+```bash
+# Using Docker Compose
+docker-compose run --rm mcp-scaudit
+
+# Or with Docker directly
+docker run -i --rm -v $(pwd)/contracts:/contracts:ro mcp-scaudit:latest
+```
+
+See [DOCKER.md](DOCKER.md) for detailed Docker usage and configuration.
+
+### Without Docker
+
+#### Running the Server
 
 ```bash
 npx mcp-scaudit
@@ -173,14 +211,43 @@ Returns a list of available and missing tools with installation instructions.
 
 Add this to your Claude Desktop configuration file:
 
-### macOS
-Location: `~/Library/Application Support/Claude/claude_desktop_config.json`
+### Configuration File Locations
 
-### Windows
-Location: `%APPDATA%/Claude/claude_desktop_config.json`
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
-### Linux
-Location: `~/.config/Claude/claude_desktop_config.json`
+### Option 1: Using Docker (Recommended - All Tools Pre-installed)
+
+```json
+{
+  "mcpServers": {
+    "scaudit": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "mcp-scaudit:latest"],
+      "cwd": "/path/to/mcp-scaudit"
+    }
+  }
+}
+```
+
+**Note:** On Windows, replace `${PWD}` with `%CD%`
+
+### Option 2: Using Docker Compose
+
+```json
+{
+  "mcpServers": {
+    "scaudit": {
+      "command": "docker-compose",
+      "args": ["run", "--rm", "mcp-scaudit"],
+      "cwd": "/path/to/mcp-scaudit"
+    }
+  }
+}
+```
+
+### Option 3: Using npx (No Docker)
 
 ```json
 {
@@ -193,7 +260,8 @@ Location: `~/.config/Claude/claude_desktop_config.json`
 }
 ```
 
-Or if installed globally:
+### Option 4: Global Installation (No Docker)
+
 ```json
 {
   "mcpServers": {
@@ -203,6 +271,8 @@ Or if installed globally:
   }
 }
 ```
+
+For more Docker configuration options, see [DOCKER.md](DOCKER.md).
 
 ## Example Workflow
 

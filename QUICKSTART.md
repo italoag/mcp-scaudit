@@ -4,7 +4,35 @@ Get started with the MCP Smart Contract Auditor in minutes!
 
 ## Installation
 
-### Option 1: Using npx (Recommended)
+### Option 1: Using Docker (Recommended - All Tools Pre-installed) 🐳
+
+**Fastest way to get started with all audit tools!**
+
+```bash
+# Clone and build
+git clone https://github.com/italoag/mcp-scaudit.git
+cd mcp-scaudit
+docker-compose build
+```
+
+Configure Claude Desktop:
+```json
+{
+  "mcpServers": {
+    "scaudit": {
+      "command": "docker-compose",
+      "args": ["run", "--rm", "mcp-scaudit"],
+      "cwd": "/path/to/mcp-scaudit"
+    }
+  }
+}
+```
+
+**Benefits:** ✅ Slither, Aderyn, and Mythril pre-installed | ✅ No dependency issues | ✅ Works everywhere
+
+See [DOCKER.md](DOCKER.md) for detailed Docker setup.
+
+### Option 2: Using npx (No Docker)
 No installation needed! Just configure Claude Desktop:
 
 ```json
@@ -18,7 +46,9 @@ No installation needed! Just configure Claude Desktop:
 }
 ```
 
-### Option 2: Global Installation
+**Note:** External tools (Slither, Aderyn, Mythril) must be installed separately.
+
+### Option 3: Global Installation
 ```bash
 npm install -g mcp-scaudit
 ```
@@ -42,15 +72,20 @@ Ask Claude:
 
 This will run the `check_tools` function and show which tools are installed.
 
+**With Docker:** All tools (Slither, Aderyn, Mythril) will be available ✅  
+**Without Docker:** Only pattern_analysis available unless you install tools separately
+
 ### 2. Run Pattern Analysis (No Additional Tools Needed)
 Ask Claude:
 > "Can you analyze this contract for security issues?" 
 
 Then paste your Solidity contract code. Claude will use the `pattern_analysis` tool which works out of the box.
 
-### 3. Install Additional Tools (Optional)
+### 3. Install Additional Tools (Optional - Skip if Using Docker)
 
-For comprehensive analysis, install these tools:
+**If you're using Docker, all tools are pre-installed! Skip this section.**
+
+For non-Docker setup, install these tools for comprehensive analysis:
 
 **Slither** (Python-based, highly recommended):
 ```bash
@@ -69,7 +104,19 @@ pip install mythril
 
 ## Example Usage
 
-### Analyze a Contract File
+### With Docker - Place Contracts in ./contracts/
+```bash
+# Create contracts directory
+mkdir -p contracts
+cp YourContract.sol contracts/
+
+# Claude will access files at /contracts/YourContract.sol
+```
+
+Then ask Claude:
+> "Run a security audit on /contracts/MyContract.sol using all available tools"
+
+### Without Docker - Use Full Paths
 > "Run a security audit on /path/to/MyContract.sol using all available tools"
 
 Claude will:
