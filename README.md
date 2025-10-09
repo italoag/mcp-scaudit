@@ -31,6 +31,11 @@ docker-compose build
 docker-compose run --rm mcp-scaudit
 ```
 
+**If you encounter network timeout errors during build**, see [DOCKER_NETWORK_TIMEOUT.md](DOCKER_NETWORK_TIMEOUT.md) for quick fixes or use:
+```bash
+make build-retry  # Automatically handles network issues
+```
+
 **Advantages:**
 - ✅ All tools (Slither, Aderyn, Mythril) pre-installed
 - ✅ Consistent environment across all platforms

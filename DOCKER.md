@@ -19,6 +19,22 @@ The Docker container provides:
    ```bash
    docker-compose build
    ```
+   
+   **If you encounter network timeout issues**, use one of these alternatives:
+   ```bash
+   # Option 1: Pre-pull images (recommended for slow networks)
+   docker pull rust:1.75-slim && docker pull node:20-slim
+   docker-compose build
+   
+   # Option 2: Use Makefile (handles retries automatically)
+   make build-retry
+   
+   # Option 3: Increase timeout
+   COMPOSE_HTTP_TIMEOUT=300 docker-compose build
+   
+   # Option 4: Use host network (for CI/CD)
+   DOCKER_BUILDKIT=1 docker build --network=host -t mcp-scaudit:latest .
+   ```
 
 2. **Run the MCP server:**
    ```bash
@@ -34,6 +50,27 @@ The Docker container provides:
    # Run audit
    docker-compose run --rm mcp-scaudit
    ```
+
+### Using Makefile (Recommended for Development)
+
+The repository includes a Makefile for easier management:
+
+```bash
+# Show all available commands
+make help
+
+# Build with automatic retry on network issues
+make build-retry
+
+# Build without cache
+make build-no-cache
+
+# Verify installation
+make verify
+
+# Run the server
+make run
+```
 
 ### Using Docker Directly
 
@@ -208,6 +245,66 @@ docker run -i --user $(id -u):$(id -g) -v $(pwd)/contracts:/contracts:ro mcp-sca
 
 # Or build with resource limits
 docker build --memory=4g -t mcp-scaudit:latest .
+```
+
+### Network timeout when pulling images
+
+If you encounter timeout errors like `failed to resolve source metadata` or `dial tcp ... i/o timeout`:
+
+```bash
+# Solution 1: Increase Docker daemon timeout
+# Add to Docker daemon.json (Linux: /etc/docker/daemon.json, Mac/Windows: Docker Desktop Settings -> Docker Engine)
+{
+  "max-concurrent-downloads": 3,
+  "max-concurrent-uploads": 5,
+  "registry-mirrors": []
+}
+
+# Solution 2: Use BuildKit with host network (better for CI/CD)
+DOCKER_BUILDKIT=1 docker build --network=host -t mcp-scaudit:latest .
+
+# Solution 3: Pull base images first (manual retry)
+docker pull rust:1.75-slim
+docker pull node:20-slim
+docker-compose build
+
+# Solution 4: Use docker-compose with increased timeout
+COMPOSE_HTTP_TIMEOUT=300 docker-compose build
+
+# Solution 5: If behind a corporate proxy
+export HTTP_PROXY=http://proxy.example.com:8080
+export HTTPS_PROXY=http://proxy.example.com:8080
+export NO_PROXY=localhost,127.0.0.1
+docker-compose build
+
+# Solution 6: Use an alternative registry mirror (for China/restricted regions)
+# Edit daemon.json to add registry mirrors:
+{
+  "registry-mirrors": ["https://mirror.gcr.io"]
+}
+# Then restart Docker daemon and retry build
+```
+
+**For CI/CD environments:**
+```bash
+# GitHub Actions - add retry logic
+- name: Build Docker image
+  run: |
+    for i in {1..3}; do
+      docker-compose build && break || sleep 15
+    done
+
+# Or use Docker Layer Caching action
+- name: Set up Docker Buildx
+  uses: docker/setup-buildx-action@v2
+  
+- name: Build and cache
+  uses: docker/build-push-action@v4
+  with:
+    context: .
+    file: ./Dockerfile
+    cache-from: type=gha
+    cache-to: type=gha,mode=max
 ```
 
 ## Security Considerations

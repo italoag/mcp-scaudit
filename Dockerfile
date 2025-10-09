@@ -1,6 +1,6 @@
 # Multi-stage build for a slim MCP Smart Contract Auditor container
 # Stage 1: Build Rust-based tools (Aderyn)
-FROM rust:1.75-slim as rust-builder
+FROM rust:1.75-slim AS rust-builder
 
 WORKDIR /build
 
