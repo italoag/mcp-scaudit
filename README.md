@@ -45,26 +45,26 @@ make build-retry  # Automatically handles network issues
 
 See [DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
 
-### Option 2: npm/npx Installation
+### Option 2: pip Installation
 
 #### Prerequisites
 
-- Node.js 18.0.0 or higher
-- npm or yarn
+- Python 3.8 or higher
+- pip
 
 #### Install the MCP Server
 
 ```bash
-npm install -g mcp-scaudit
+pip install mcp-scaudit
 ```
 
-Or install locally:
+Or install locally from source:
 
 ```bash
 git clone https://github.com/italoag/mcp-scaudit.git
 cd mcp-scaudit
-npm install
-npm run build
+pip install -r requirements.txt
+pip install -e .
 ```
 
 #### Install Audit Tools (Optional)
@@ -107,10 +107,10 @@ See [DOCKER.md](DOCKER.md) for detailed Docker usage and configuration.
 #### Running the Server
 
 ```bash
-npx mcp-scaudit
+python3 -m mcp_scaudit
 ```
 
-Or if installed globally:
+Or if installed as a package:
 ```bash
 mcp-scaudit
 ```
@@ -253,20 +253,21 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
-### Option 3: Using npx (No Docker)
+### Option 3: Using Python Module (No Docker)
 
 ```json
 {
   "mcpServers": {
     "scaudit": {
-      "command": "npx",
-      "args": ["mcp-scaudit"]
+      "command": "python3",
+      "args": ["-m", "mcp_scaudit"],
+      "cwd": "/path/to/mcp-scaudit"
     }
   }
 }
 ```
 
-### Option 4: Global Installation (No Docker)
+### Option 4: Using pip Installation (No Docker)
 
 ```json
 {
@@ -313,27 +314,32 @@ For more Docker configuration options, see [DOCKER.md](DOCKER.md).
 ```bash
 git clone https://github.com/italoag/mcp-scaudit.git
 cd mcp-scaudit
-npm install
-npm run build
+pip install -r requirements.txt
+pip install -e .
 ```
 
 ### Development Mode
 
 ```bash
-npm run watch  # Watch for changes
-npm run dev    # Build and run
+# Run directly from source
+python3 -m mcp_scaudit
+
+# With debugging
+python3 -u -m mcp_scaudit
 ```
 
 ### Project Structure
 
 ```
 mcp-scaudit/
-├── src/
-│   └── index.ts          # Main server implementation
-├── dist/                 # Built output (generated)
-├── package.json          # Project dependencies
-├── tsconfig.json         # TypeScript configuration
-└── README.md            # This file
+├── mcp_scaudit/
+│   ├── __init__.py          # Package initialization
+│   └── __main__.py          # Main server implementation
+├── pyproject.toml           # Python project configuration
+├── requirements.txt         # Python dependencies
+├── setup.py                 # Setup configuration
+├── Dockerfile               # Docker configuration
+└── README.md               # This file
 ```
 
 ## Troubleshooting

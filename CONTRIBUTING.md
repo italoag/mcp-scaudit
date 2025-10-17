@@ -6,30 +6,31 @@ Thank you for your interest in contributing to the MCP Smart Contract Auditor! T
 
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/mcp-scaudit.git`
-3. Install dependencies: `npm install`
-4. Build the project: `npm run build`
+3. Install dependencies: `pip install -r requirements.txt`
+4. Run the server: `python3 -m mcp_scaudit`
 
 ## Development Setup
 
 ### Prerequisites
 
-- Node.js 18.0.0 or higher
-- npm or yarn
-- TypeScript knowledge
+- Python 3.8 or higher
+- pip
 - Understanding of smart contract security (helpful but not required)
+- Familiarity with async/await in Python (helpful)
 
 ### Project Structure
 
 ```
 mcp-scaudit/
-├── src/
-│   └── index.ts          # Main server implementation
-├── dist/                 # Built output (generated)
+├── mcp_scaudit/
+│   ├── __init__.py       # Package initialization
+│   └── __main__.py       # Main server implementation
 ├── examples/             # Example contracts for testing
-├── package.json          # Project dependencies
-├── tsconfig.json         # TypeScript configuration
-├── README.md            # Main documentation
-└── CONTRIBUTING.md      # This file
+├── pyproject.toml        # Python project configuration
+├── requirements.txt      # Python dependencies
+├── setup.py              # Setup configuration
+├── README.md             # Main documentation
+└── CONTRIBUTING.md       # This file
 ```
 
 ## Development Workflow
@@ -37,34 +38,43 @@ mcp-scaudit/
 ### Making Changes
 
 1. Create a new branch: `git checkout -b feature/your-feature-name`
-2. Make your changes in the `src/` directory
-3. Build the project: `npm run build`
-4. Test your changes manually
+2. Make your changes in the `mcp_scaudit/` directory
+3. Test your changes: `python3 -m mcp_scaudit`
+4. Format your code: `black mcp_scaudit/` (optional)
 5. Commit your changes with clear, descriptive messages
 
-### Building
+### Development Commands
 
 ```bash
-npm run build        # Compile TypeScript to JavaScript
-npm run watch        # Watch mode for development
+# Run the server
+python3 -m mcp_scaudit
+
+# Format code (optional but recommended)
+pip install black
+black mcp_scaudit/
+
+# Type checking (optional but recommended)
+pip install mypy
+mypy mcp_scaudit/
 ```
 
 ### Testing
 
 Currently, testing is done manually. To test your changes:
 
-1. Build the project: `npm run build`
-2. Run the server: `node dist/index.js`
-3. Test with MCP protocol messages via stdin/stdout
-4. Test with example contracts in the `examples/` directory
+1. Run the server: `python3 -m mcp_scaudit`
+2. Test with MCP protocol messages via stdin/stdout
+3. Test with example contracts in the `examples/` directory
+4. Test specific functions by importing them in a Python shell
 
 ### Code Style
 
-- Use TypeScript strict mode
-- Follow the existing code style
-- Add JSDoc comments for public functions
+- Follow PEP 8 style guidelines
+- Use type hints for function parameters and return values
+- Add docstrings to functions and classes
 - Use descriptive variable and function names
-- Handle errors appropriately
+- Handle errors appropriately with try/except blocks
+- Use async/await for I/O operations
 
 ## Types of Contributions
 
@@ -112,42 +122,70 @@ We welcome pull requests for:
 
 1. Update the README.md if needed
 2. Add examples if you're adding new features
-3. Ensure the build succeeds: `npm run build`
-4. Update the CHANGELOG if you're adding significant features
+3. Test your changes thoroughly
+4. Use conventional commit messages (see CI_CD_SETUP.md)
 5. Submit the pull request with a clear description of changes
 
 ## Adding New Audit Tools
 
 To add a new audit tool integration:
 
-1. Add a new function in `src/index.ts` (e.g., `runNewTool`)
-2. Add the tool to the `tools` array with proper schema
-3. Add a case in the `CallToolRequestSchema` handler
+1. Add a new async function in `mcp_scaudit/__main__.py` (e.g., `run_new_tool`)
+2. Add the tool to the `tools` list in the `main()` function
+3. Add a case in the `call_tool` handler
 4. Update the `check_tools` function to include the new tool
 5. Update the README.md with documentation
 6. Add examples if relevant
 
 Example structure:
 
-```typescript
-async function runNewTool(
-  contractPath: string,
-  options?: { /* tool-specific options */ }
-): Promise<AuditResult> {
-  // Implementation
-}
+```python
+async def run_new_tool(
+    contract_path: str,
+    options: Optional[Dict[str, Any]] = None
+) -> AuditResult:
+    """Run NewTool analysis on a smart contract"""
+    try:
+        if not file_exists(contract_path):
+            return AuditResult(
+                success=False,
+                error=f"Contract file not found: {contract_path}"
+            )
+        
+        if not command_exists("newtool"):
+            return AuditResult(
+                success=False,
+                error="NewTool is not installed. Install with: pip install newtool"
+            )
+        
+        # Run the tool
+        result = subprocess.run(
+            ["newtool", contract_path],
+            capture_output=True,
+            text=True,
+            timeout=300
+        )
+        
+        return AuditResult(
+            success=True,
+            output=result.stdout
+        )
+    except Exception as e:
+        return AuditResult(
+            success=False,
+            error=f"NewTool analysis failed: {str(e)}"
+        )
 ```
 
 ## Adding New Pattern Checks
 
-To add new vulnerability pattern checks to `analyzeContractPatterns`:
+To add new vulnerability pattern checks to `analyze_contract_patterns`:
 
-```typescript
-if (content.includes("PATTERN_TO_CHECK")) {
-  findings.push(
-    "SEVERITY: Description of the issue and recommendation"
-  );
-}
+```python
+if "PATTERN_TO_CHECK" in content:
+    findings.append(
+        "SEVERITY: Description of the issue and recommendation"
+    )
 ```
 
 Use severity levels:
