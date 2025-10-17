@@ -18,9 +18,9 @@ services:
       # Optional: Mount custom configurations
       - ./config:/config:ro
     environment:
-      - NODE_ENV=production
+      - PYTHONUNBUFFERED=1
     # For interactive use with stdio
-    command: node dist/index.js
+    command: python3 -m src.mcp_scaudit
     restart: unless-stopped
 
   # Development version with hot reload
@@ -28,19 +28,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: rust-builder
     image: mcp-scaudit:dev
     container_name: mcp-scaudit-dev
     stdin_open: true
     tty: true
     volumes:
       - .:/app
-      - /app/node_modules
       - ./contracts:/contracts:ro
     working_dir: /app
     environment:
-      - NODE_ENV=development
-    command: npm run watch
+      - PYTHONUNBUFFERED=1
+    command: python3 -m src.mcp_scaudit
     restart: unless-stopped
     profiles:
       - dev

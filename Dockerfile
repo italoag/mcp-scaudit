@@ -3,7 +3,7 @@
 # Users can install Aderyn separately if needed
 
 # Stage 1: Final image
-FROM node:20-slim
+FROM python:3.12-slim
 
 LABEL maintainer="mcp-scaudit"
 LABEL description="MCP Smart Contract Auditor with Slither and Mythril pre-installed (Aderyn optional)"
@@ -16,9 +16,6 @@ RUN apt-get update -o Acquire::Check-Valid-Until=false || \
      apt-get update -o Acquire::Check-Valid-Until=false) && \
     apt-get install -y --no-install-recommends \
     ca-certificates \
-    python3 \
-    python3-pip \
-    python3-dev \
     git \
     build-essential \
     libssl-dev \
@@ -26,18 +23,25 @@ RUN apt-get update -o Acquire::Check-Valid-Until=false || \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python-based tools (Slither and Mythril)
-# Using --break-system-packages flag required for Debian bookworm (PEP 668)
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install Python dependencies first for better caching
+COPY requirements.txt ./
+RUN pip3 install --no-cache-dir -r requirements.txt && \
+    rm -rf ~/.cache/pip
+
+# Install Python-based audit tools (Slither and Mythril)
 # Adding --trusted-host flags to bypass SSL certificate verification issues
 # Installing separately to speed up dependency resolution
-RUN pip3 install --no-cache-dir --break-system-packages \
+RUN pip3 install --no-cache-dir \
     --trusted-host pypi.org \
     --trusted-host pypi.python.org \
     --trusted-host files.pythonhosted.org \
     slither-analyzer==0.10.0 \
     && rm -rf ~/.cache/pip
 
-RUN pip3 install --no-cache-dir --break-system-packages \
+RUN pip3 install --no-cache-dir \
     --trusted-host pypi.org \
     --trusted-host pypi.python.org \
     --trusted-host files.pythonhosted.org \
@@ -45,7 +49,7 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     && rm -rf ~/.cache/pip
 
 # Fix dependency conflicts between tools
-RUN pip3 install --no-cache-dir --break-system-packages \
+RUN pip3 install --no-cache-dir \
     --trusted-host pypi.org \
     --trusted-host pypi.python.org \
     --trusted-host files.pythonhosted.org \
@@ -54,28 +58,14 @@ RUN pip3 install --no-cache-dir --break-system-packages \
 
 # Note: Dependency conflicts between Slither and Mythril are expected
 # Both tools will work at runtime despite version warnings
-# Skipping version check to complete build
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
-
-# Install Node.js dependencies (including devDependencies for building)
-# Configure npm to bypass SSL verification issues
-# Skip prepare script during install (we'll build later)
-RUN npm config set strict-ssl false && \
-    npm install --ignore-scripts && \
-    npm cache clean --force
 
 # Copy source code
 COPY src ./src
 COPY examples ./examples
+COPY pyproject.toml ./
 
-# Build TypeScript
-RUN npm run build
+# Install the package
+RUN pip3 install -e . && rm -rf ~/.cache/pip
 
 # Create a non-root user (or use existing user if UID 1000 exists)
 RUN id -u 1000 >/dev/null 2>&1 || useradd -m -u 1000 mcp && \
@@ -85,11 +75,11 @@ RUN id -u 1000 >/dev/null 2>&1 || useradd -m -u 1000 mcp && \
 USER 1000
 
 # Set environment variables
-ENV NODE_ENV=production
-ENV PATH="/usr/local/bin:${PATH}"
+ENV PYTHONUNBUFFERED=1
+ENV PATH="/home/mcp/.local/bin:${PATH}"
 
 # Expose stdio for MCP communication
-ENTRYPOINT ["node", "dist/index.js"]
+ENTRYPOINT ["python3", "-m", "src.mcp_scaudit"]
 
 # Health check disabled due to dependency conflicts between tools
 # Tools will work at runtime despite version warnings
