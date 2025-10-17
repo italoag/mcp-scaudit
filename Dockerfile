@@ -28,7 +28,11 @@ WORKDIR /app
 
 # Copy requirements and install Python dependencies first for better caching
 COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt && \
+RUN pip3 install --no-cache-dir \
+    --trusted-host pypi.org \
+    --trusted-host pypi.python.org \
+    --trusted-host files.pythonhosted.org \
+    -r requirements.txt && \
     rm -rf ~/.cache/pip
 
 # Install Python-based audit tools (Slither and Mythril)
@@ -65,7 +69,11 @@ COPY examples ./examples
 COPY pyproject.toml ./
 
 # Install the package
-RUN pip3 install -e . && rm -rf ~/.cache/pip
+RUN pip3 install --no-cache-dir \
+    --trusted-host pypi.org \
+    --trusted-host pypi.python.org \
+    --trusted-host files.pythonhosted.org \
+    -e . && rm -rf ~/.cache/pip
 
 # Create a non-root user (or use existing user if UID 1000 exists)
 RUN id -u 1000 >/dev/null 2>&1 || useradd -m -u 1000 mcp && \

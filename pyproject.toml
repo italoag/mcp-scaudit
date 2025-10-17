@@ -64,7 +64,7 @@ Repository = "https://github.com/italoag/mcp-scaudit"
 Issues = "https://github.com/italoag/mcp-scaudit/issues"
 
 [project.scripts]
-mcp-scaudit = "mcp_scaudit:main"
+mcp-scaudit = "mcp_scaudit:run"
 
 [tool.setuptools]
 packages = ["src"]

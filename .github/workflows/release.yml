@@ -183,12 +183,10 @@ jobs:
           path: dist/
 
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.version.outputs.new_tag }}
-          release_name: Release ${{ needs.version.outputs.new_tag }}
+          name: Release ${{ needs.version.outputs.new_tag }}
           body: |
             ## Changes in this Release
             
@@ -205,22 +203,15 @@ jobs:
             
             ### Using pip
             ```bash
-            pip install dist/mcp-scaudit-${{ needs.version.outputs.new_version }}.tar.gz
+            pip install mcp-scaudit
             ```
             
             ### Using Docker
             ```bash
             docker run -i --rm ghcr.io/${{ github.repository }}:${{ needs.version.outputs.new_version }}
             ```
+          files: |
+            dist/*.tar.gz
+            dist/*.whl
           draft: false
           prerelease: false
-
-      - name: Upload release assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/mcp-scaudit-${{ needs.version.outputs.new_version }}.tar.gz
-          asset_name: mcp-scaudit-${{ needs.version.outputs.new_version }}.tar.gz
-          asset_content_type: application/gzip
