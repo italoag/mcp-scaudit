@@ -64,9 +64,10 @@ RUN pip3 install --no-cache-dir \
 # Both tools will work at runtime despite version warnings
 
 # Copy source code
-COPY src ./src
+COPY mcp_scaudit ./mcp_scaudit
 COPY examples ./examples
 COPY pyproject.toml ./
+COPY setup.py ./
 
 # Install the package
 RUN pip3 install --no-cache-dir \
@@ -87,7 +88,7 @@ ENV PYTHONUNBUFFERED=1
 ENV PATH="/home/mcp/.local/bin:${PATH}"
 
 # Expose stdio for MCP communication
-ENTRYPOINT ["python3", "-m", "src.mcp_scaudit"]
+ENTRYPOINT ["python3", "-m", "mcp_scaudit"]
 
 # Health check disabled due to dependency conflicts between tools
 # Tools will work at runtime despite version warnings

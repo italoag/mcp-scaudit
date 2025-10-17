@@ -20,7 +20,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     # For interactive use with stdio
-    command: python3 -m src.mcp_scaudit
+    command: python3 -m mcp_scaudit
     restart: unless-stopped
 
   # Development version with hot reload
@@ -38,7 +38,7 @@ services:
     working_dir: /app
     environment:
       - PYTHONUNBUFFERED=1
-    command: python3 -m src.mcp_scaudit
+    command: python3 -m mcp_scaudit
     restart: unless-stopped
     profiles:
       - dev

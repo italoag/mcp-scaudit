@@ -107,7 +107,7 @@ See [DOCKER.md](DOCKER.md) for detailed Docker usage and configuration.
 #### Running the Server
 
 ```bash
-python3 -m src.mcp_scaudit
+python3 -m mcp_scaudit
 ```
 
 Or if installed as a package:
@@ -260,7 +260,7 @@ Add this to your Claude Desktop configuration file:
   "mcpServers": {
     "scaudit": {
       "command": "python3",
-      "args": ["-m", "src.mcp_scaudit"],
+      "args": ["-m", "mcp_scaudit"],
       "cwd": "/path/to/mcp-scaudit"
     }
   }
@@ -322,21 +322,22 @@ pip install -e .
 
 ```bash
 # Run directly from source
-python3 -m src.mcp_scaudit
+python3 -m mcp_scaudit
 
 # With debugging
-python3 -u -m src.mcp_scaudit
+python3 -u -m mcp_scaudit
 ```
 
 ### Project Structure
 
 ```
 mcp-scaudit/
-├── src/
+├── mcp_scaudit/
 │   ├── __init__.py          # Package initialization
-│   └── mcp_scaudit.py       # Main server implementation
+│   └── __main__.py          # Main server implementation
 ├── pyproject.toml           # Python project configuration
 ├── requirements.txt         # Python dependencies
+├── setup.py                 # Setup configuration
 ├── Dockerfile               # Docker configuration
 └── README.md               # This file
 ```
