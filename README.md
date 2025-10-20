@@ -17,7 +17,7 @@ This MCP server provides a unified interface for running multiple smart contract
 
 ## Installation
 
-### Option 1: Docker (Recommended - All Tools Pre-installed) 🐳
+### Option 1: Docker (Recommended - All Tools Pre-installed)
 
 Use Docker for a hassle-free setup with all audit tools pre-installed:
 
@@ -31,19 +31,19 @@ docker-compose build
 docker-compose run --rm mcp-scaudit
 ```
 
-**If you encounter network timeout errors during build**, see [DOCKER_NETWORK_TIMEOUT.md](DOCKER_NETWORK_TIMEOUT.md) for quick fixes or use:
+**If you encounter network timeout errors during build**, see [docs/DOCKER_NETWORK_TIMEOUT.md](docs/DOCKER_NETWORK_TIMEOUT.md) for quick fixes or use:
 ```bash
 make build-retry  # Automatically handles network issues
 ```
 
 **Advantages:**
-- ✅ Slither and Mythril pre-installed
-- ✅ Consistent environment across all platforms
-- ✅ No dependency conflicts
-- ✅ Optimized slim image (~1.3-1.4GB)
-- ⚠️ Aderyn not pre-installed (can be added manually if needed)
+- Slither and Mythril pre-installed
+- Consistent environment across all platforms
+- No dependency conflicts
+- Optimized slim image (~1.3-1.4GB)
+- Aderyn not pre-installed (can be added manually if needed)
 
-See [DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
+See [docs/DOCKER.md](docs/DOCKER.md) for detailed Docker setup and configuration.
 
 ### Option 2: pip Installation
 
@@ -100,7 +100,7 @@ docker-compose run --rm mcp-scaudit
 docker run -i --rm -v $(pwd)/contracts:/contracts:ro mcp-scaudit:latest
 ```
 
-See [DOCKER.md](DOCKER.md) for detailed Docker usage and configuration.
+See [docs/DOCKER.md](docs/DOCKER.md) for detailed Docker usage and configuration.
 
 ### Without Docker
 
@@ -215,7 +215,7 @@ Returns a list of available and missing tools with installation instructions.
 
 ## Configuration with Claude Desktop
 
-Add this to your Claude Desktop configuration file:
+Add this to your Claude Desktop configuration file. The configuration file must use absolute paths.
 
 ### Configuration File Locations
 
@@ -225,21 +225,36 @@ Add this to your Claude Desktop configuration file:
 
 ### Option 1: Using Docker (Recommended - All Tools Pre-installed)
 
+**Important**: Replace `/absolute/path/to/mcp-scaudit` with the actual absolute path where you cloned this repository.
+
 ```json
 {
   "mcpServers": {
     "scaudit": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "mcp-scaudit:latest"],
-      "cwd": "/path/to/mcp-scaudit"
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
 ```
 
-**Note:** On Windows, replace `${PWD}` with `%CD%`
+**Note:** On Windows, replace `${PWD}` with `%CD%` and use Windows-style paths:
+```json
+{
+  "mcpServers": {
+    "scaudit": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "mcp-scaudit:latest"],
+      "cwd": "C:\\absolute\\path\\to\\mcp-scaudit"
+    }
+  }
+}
+```
 
 ### Option 2: Using Docker Compose
+
+**Important**: Replace `/absolute/path/to/mcp-scaudit` with the actual absolute path where you cloned this repository.
 
 ```json
 {
@@ -247,7 +262,7 @@ Add this to your Claude Desktop configuration file:
     "scaudit": {
       "command": "docker-compose",
       "args": ["run", "--rm", "mcp-scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
@@ -255,19 +270,23 @@ Add this to your Claude Desktop configuration file:
 
 ### Option 3: Using Python Module (No Docker)
 
+**Important**: Replace `/absolute/path/to/mcp-scaudit` with the actual absolute path where you cloned this repository.
+
 ```json
 {
   "mcpServers": {
     "scaudit": {
       "command": "python3",
       "args": ["-m", "mcp_scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
 ```
 
 ### Option 4: Using pip Installation (No Docker)
+
+If you installed the package globally with `pip install mcp-scaudit`:
 
 ```json
 {
@@ -279,7 +298,7 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
-For more Docker configuration options, see [DOCKER.md](DOCKER.md).
+For more Docker configuration options, see [docs/DOCKER.md](docs/DOCKER.md).
 
 ## Example Workflow
 

@@ -15,9 +15,11 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 
 ## Configuration Options
 
-### Option 1: Using Docker (Recommended - All Tools Pre-installed) 🐳
+### Option 1: Using Docker (Recommended - All Tools Pre-installed)
 
 **Best option for having all audit tools (Slither, Aderyn, Mythril) pre-installed:**
+
+Replace `/absolute/path/to/mcp-scaudit` with the actual absolute path where you cloned this repository.
 
 ```json
 {
@@ -31,20 +33,22 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 }
 ```
 
-**Note for Windows users:** Replace `${PWD}` with `%CD%`:
+**Note for Windows users:** Replace `${PWD}` with `%CD%` and use Windows-style paths:
 ```json
 {
   "mcpServers": {
     "scaudit": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "mcp-scaudit:latest"],
-      "cwd": "C:\\path\\to\\mcp-scaudit"
+      "cwd": "C:\\absolute\\path\\to\\mcp-scaudit"
     }
   }
 }
 ```
 
 ### Option 2: Using Docker Compose (Recommended Alternative)
+
+Replace `/absolute/path/to/mcp-scaudit` with the actual absolute path where you cloned this repository.
 
 ```json
 {
@@ -59,29 +63,32 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 ```
 
 **Benefits:**
-- ✅ All tools pre-installed (Slither, Aderyn, Mythril)
-- ✅ No dependency conflicts
-- ✅ Consistent environment
-- ✅ Easy updates with `docker-compose pull`
+- All tools pre-installed (Slither, Aderyn, Mythril)
+- No dependency conflicts
+- Consistent environment
+- Easy updates with `docker-compose pull`
 
 See [DOCKER.md](DOCKER.md) for detailed Docker setup.
 
-### Option 3: Using npx (No Docker - Tools Need Manual Installation)
+### Option 3: Using Python Module (No Docker - Tools Need Manual Installation)
+
+Replace `/absolute/path/to/mcp-scaudit` with the actual absolute path where you cloned this repository.
 
 ```json
 {
   "mcpServers": {
     "scaudit": {
-      "command": "npx",
-      "args": ["-y", "mcp-scaudit"]
+      "command": "python3",
+      "args": ["-m", "mcp_scaudit"],
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
 ```
 
-### Option 4: Using global installation
+### Option 4: Using pip Installation (No Docker)
 
-If you've installed the package globally with `npm install -g mcp-scaudit`:
+If you've installed the package globally with `pip install mcp-scaudit`:
 
 ```json
 {
@@ -95,14 +102,15 @@ If you've installed the package globally with `npm install -g mcp-scaudit`:
 
 ### Option 5: Using local repository (for development)
 
-If you're developing or testing locally:
+If you're developing or testing locally, replace `/absolute/path/to/mcp-scaudit` with the actual absolute path:
 
 ```json
 {
   "mcpServers": {
     "scaudit": {
-      "command": "node",
-      "args": ["/path/to/mcp-scaudit/dist/index.js"]
+      "command": "python3",
+      "args": ["-m", "mcp_scaudit"],
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
@@ -116,8 +124,9 @@ You can have multiple MCP servers configured at once:
 {
   "mcpServers": {
     "scaudit": {
-      "command": "npx",
-      "args": ["-y", "mcp-scaudit"]
+      "command": "python3",
+      "args": ["-m", "mcp_scaudit"],
+      "cwd": "/absolute/path/to/mcp-scaudit"
     },
     "filesystem": {
       "command": "npx",
