@@ -1,12 +1,16 @@
-# Multi-stage build for a slim MCP Smart Contract Auditor container
-# Note: Aderyn installation is skipped due to SSL certificate issues in build environment
-# Users can install Aderyn separately if needed
+# Multi-stage build for a slim MCP Smart Contract Auditor container with all audit tools
 
-# Stage 1: Final image
+# Stage 1: Build Aderyn (Rust-based tool)
+FROM rust:1.75-slim as rust-builder
+
+# Install Aderyn using cargo
+RUN cargo install aderyn
+
+# Stage 2: Final image
 FROM python:3.12-slim
 
 LABEL maintainer="mcp-scaudit"
-LABEL description="MCP Smart Contract Auditor with Slither and Mythril pre-installed (Aderyn optional)"
+LABEL description="MCP Smart Contract Auditor with Slither, Mythril, and Aderyn pre-installed"
 
 # Install system dependencies
 # Fix for GPG signature issues with Debian repositories
@@ -75,6 +79,9 @@ RUN pip3 install --no-cache-dir \
     --trusted-host pypi.python.org \
     --trusted-host files.pythonhosted.org \
     -e . && rm -rf ~/.cache/pip
+
+# Copy Aderyn binary from rust-builder stage
+COPY --from=rust-builder /usr/local/cargo/bin/aderyn /usr/local/bin/aderyn
 
 # Create a non-root user (or use existing user if UID 1000 exists)
 RUN id -u 1000 >/dev/null 2>&1 || useradd -m -u 1000 mcp && \
