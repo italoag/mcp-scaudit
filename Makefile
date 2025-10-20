@@ -8,20 +8,19 @@ help: ## Show this help message
 
 pull-images: ## Pull base images first (helps with network issues)
 	@echo "Pulling base images..."
-	docker pull rust:1.75-slim
-	docker pull node:20-slim
+	docker pull python:3.12-slim
 
 build: ## Build the Docker image
 	@echo "Building mcp-scaudit Docker image..."
-	docker-compose build
+	docker compose build
 
 build-no-cache: ## Build without cache (clean build)
 	@echo "Building mcp-scaudit Docker image (no cache)..."
-	docker-compose build --no-cache
+	docker compose build --no-cache
 
 build-retry: pull-images ## Build with retry logic for network issues
 	@echo "Building with pre-pulled images..."
-	docker-compose build
+	docker compose build
 
 build-host-network: ## Build using host network (useful for CI/CD)
 	@echo "Building with host network..."
@@ -29,30 +28,38 @@ build-host-network: ## Build using host network (useful for CI/CD)
 
 run: ## Run the MCP server
 	@echo "Running mcp-scaudit..."
-	docker-compose run --rm mcp-scaudit
+	docker compose run --rm mcp-scaudit
 
 dev: ## Run in development mode
 	@echo "Running mcp-scaudit in development mode..."
-	docker-compose --profile dev up mcp-scaudit-dev
+	docker compose --profile dev up mcp-scaudit-dev
 
 verify: ## Verify all tools are installed correctly
 	@echo "Verifying tool installations..."
 	@echo "Note: Dependency conflicts between tools may produce warnings but tools will work."
-	docker run --rm mcp-scaudit:latest sh -c "timeout 2 node dist/index.js 2>&1 | head -5"
+	@echo "Testing MCP server startup..."
+	docker run --rm mcp-scaudit:latest sh -c "timeout 2 python3 -m mcp_scaudit 2>&1 | head -5"
+	@echo "Testing tool availability..."
+	docker run --rm --entrypoint sh mcp-scaudit:latest -c "slither --version && echo 'Slither: OK'"
+	docker run --rm --entrypoint sh mcp-scaudit:latest -c "myth --version && echo 'Mythril: OK'"
+	@echo "Testing Aderyn (may not be available if cargo install failed)..."
+	docker run --rm --entrypoint sh mcp-scaudit:latest -c "aderyn --version && echo 'Aderyn: OK' || echo 'Aderyn: Not available (expected if cargo install failed due to SSL issues)'"
 
 test: verify ## Run tests
 	@echo "Running health checks..."
 	docker run --rm --entrypoint python3 mcp-scaudit:latest -c "import slither; print('Slither: OK')"
 	docker run --rm --entrypoint sh mcp-scaudit:latest -c "myth --version 2>&1 | head -1"
+	@echo "Aderyn health check (may not be available)..."
+	docker run --rm --entrypoint sh mcp-scaudit:latest -c "aderyn --version 2>&1 | head -1 || echo 'Aderyn not available'"
 
 clean: ## Remove built images and containers
 	@echo "Cleaning up..."
-	docker-compose down -v
+	docker compose down -v
 	docker rmi mcp-scaudit:latest || true
 	docker rmi mcp-scaudit:dev || true
 
 logs: ## Show container logs
-	docker-compose logs -f mcp-scaudit
+	docker compose logs -f mcp-scaudit
 
 size: ## Show image size
 	@docker images mcp-scaudit:latest --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
