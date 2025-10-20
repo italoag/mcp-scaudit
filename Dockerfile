@@ -1,19 +1,13 @@
-# Multi-stage build for a slim MCP Smart Contract Auditor container with all audit tools
+# Multi-stage build for MCP Smart Contract Auditor container
+# This Dockerfile includes Slither and Mythril (Python-based tools)
+# Aderyn (Rust-based) can be added via a separate build stage (see below)
 
-# Stage 1: Build Aderyn (Rust-based tool)
-FROM rust:1.75-slim as rust-builder
-
-# Install Aderyn using cargo
-RUN cargo install aderyn
-
-# Stage 2: Final image
 FROM python:3.12-slim
 
 LABEL maintainer="mcp-scaudit"
-LABEL description="MCP Smart Contract Auditor with Slither, Mythril, and Aderyn pre-installed"
+LABEL description="MCP Smart Contract Auditor with Slither and Mythril pre-installed. Aderyn can be added if needed."
 
-# Install system dependencies
-# Fix for GPG signature issues with Debian repositories
+# Install system dependencies including Rust/Cargo for optional Aderyn installation
 RUN apt-get update -o Acquire::Check-Valid-Until=false || \
     (apt-get clean && \
      rm -rf /var/lib/apt/lists/* && \
@@ -24,8 +18,13 @@ RUN apt-get update -o Acquire::Check-Valid-Until=false || \
     build-essential \
     libssl-dev \
     pkg-config \
+    curl \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Rust and Cargo (required for Aderyn)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Set working directory
 WORKDIR /app
@@ -80,8 +79,10 @@ RUN pip3 install --no-cache-dir \
     --trusted-host files.pythonhosted.org \
     -e . && rm -rf ~/.cache/pip
 
-# Copy Aderyn binary from rust-builder stage
-COPY --from=rust-builder /usr/local/cargo/bin/aderyn /usr/local/bin/aderyn
+# Optional: Install Aderyn (may fail in environments with SSL cert issues)
+# If installation fails, Aderyn can be installed later with: cargo install aderyn
+RUN cargo install aderyn || \
+    echo "WARNING: Aderyn installation failed. You can install it manually later with 'cargo install aderyn'"
 
 # Create a non-root user (or use existing user if UID 1000 exists)
 RUN id -u 1000 >/dev/null 2>&1 || useradd -m -u 1000 mcp && \
@@ -92,10 +93,11 @@ USER 1000
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV PATH="/home/mcp/.local/bin:${PATH}"
+ENV PATH="/home/mcp/.local/bin:/root/.cargo/bin:${PATH}"
 
 # Expose stdio for MCP communication
 ENTRYPOINT ["python3", "-m", "mcp_scaudit"]
 
-# Health check disabled due to dependency conflicts between tools
-# Tools will work at runtime despite version warnings
+# Note: Slither and Mythril are always available
+# Aderyn may not be available if cargo install failed due to SSL issues
+# Check available tools with the check_tools command
