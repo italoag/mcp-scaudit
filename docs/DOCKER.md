@@ -5,11 +5,11 @@ This document explains how to use the MCP Smart Contract Auditor with Docker, pr
 ## Overview
 
 The Docker container provides:
-- ✅ **Slither** (v0.10.0) - Python-based static analyzer
-- ✅ **Mythril** (v0.24.8) - Symbolic execution analyzer
-- ⚠️ **Aderyn** (optional) - Not pre-installed due to build environment SSL issues, can be added manually
-- ✅ **Node.js 20** - Runtime environment
-- ✅ **MCP Server** - Pre-built and ready to use
+- **Slither** (v0.10.0) - Python-based static analyzer
+- **Mythril** (v0.24.8) - Symbolic execution analyzer
+- **Aderyn** (optional) - Not pre-installed due to build environment SSL issues, can be added manually
+- **Node.js 20** - Runtime environment
+- **MCP Server** - Pre-built and ready to use
 
 **Note**: The build process includes workarounds for SSL certificate issues in certain environments. If you encounter SSL errors, the build should handle them automatically using --trusted-host flags and SSL verification bypasses.
 
@@ -88,7 +88,7 @@ make run
 
 ### Option 1: Using Docker with stdin/stdout
 
-Add to your Claude Desktop configuration:
+Add to your Claude Desktop configuration. Replace `/absolute/path/to/mcp-scaudit` with the actual absolute path where you cloned this repository.
 
 **macOS/Linux:**
 ```json
@@ -96,7 +96,8 @@ Add to your Claude Desktop configuration:
   "mcpServers": {
     "scaudit": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "mcp-scaudit:latest"]
+      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "mcp-scaudit:latest"],
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
@@ -108,7 +109,8 @@ Add to your Claude Desktop configuration:
   "mcpServers": {
     "scaudit": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "mcp-scaudit:latest"]
+      "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "mcp-scaudit:latest"],
+      "cwd": "C:\\absolute\\path\\to\\mcp-scaudit"
     }
   }
 }
@@ -116,13 +118,15 @@ Add to your Claude Desktop configuration:
 
 ### Option 2: Using Docker Compose
 
+Replace `/absolute/path/to/mcp-scaudit` with the actual absolute path where you cloned this repository.
+
 ```json
 {
   "mcpServers": {
     "scaudit": {
       "command": "docker-compose",
       "args": ["run", "--rm", "mcp-scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
@@ -367,5 +371,5 @@ docker push ghcr.io/yourusername/mcp-scaudit:latest
 
 For issues related to:
 - **Docker setup**: Check this document and Docker logs
-- **MCP server**: See main [README.md](README.md)
+- **MCP server**: See main [../README.md](../README.md)
 - **Audit tools**: Refer to tool-specific documentation (Slither, Aderyn, Mythril)

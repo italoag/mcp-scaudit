@@ -4,7 +4,7 @@ Get started with the MCP Smart Contract Auditor in minutes!
 
 ## Installation
 
-### Option 1: Using Docker (Recommended - All Tools Pre-installed) 🐳
+### Option 1: Using Docker (Recommended - All Tools Pre-installed)
 
 **Fastest way to get started with all audit tools!**
 
@@ -15,34 +15,35 @@ cd mcp-scaudit
 docker-compose build
 ```
 
-Configure Claude Desktop:
+Configure Claude Desktop (replace `/absolute/path/to/mcp-scaudit` with actual path):
 ```json
 {
   "mcpServers": {
     "scaudit": {
       "command": "docker-compose",
       "args": ["run", "--rm", "mcp-scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
 ```
 
-**Benefits:** ✅ Slither and Mythril pre-installed | ✅ No dependency issues | ✅ Works everywhere
+**Benefits:** Slither and Mythril pre-installed | No dependency issues | Works everywhere
 
 **Note:** Aderyn is not pre-installed in Docker due to build environment issues, but Slither and Mythril provide comprehensive coverage.
 
 See [DOCKER.md](DOCKER.md) for detailed Docker setup.
 
-### Option 2: Using npx (No Docker)
-No installation needed! Just configure Claude Desktop:
+### Option 2: Using Python Module (No Docker)
+No installation needed! Just configure Claude Desktop (replace `/absolute/path/to/mcp-scaudit` with actual path):
 
 ```json
 {
   "mcpServers": {
     "scaudit": {
-      "command": "npx",
-      "args": ["-y", "mcp-scaudit"]
+      "command": "python3",
+      "args": ["-m", "mcp_scaudit"],
+      "cwd": "/absolute/path/to/mcp-scaudit"
     }
   }
 }
@@ -50,9 +51,9 @@ No installation needed! Just configure Claude Desktop:
 
 **Note:** External tools (Slither, Aderyn, Mythril) must be installed separately.
 
-### Option 3: Global Installation
+### Option 3: Using pip Installation
 ```bash
-npm install -g mcp-scaudit
+pip install mcp-scaudit
 ```
 
 Then configure Claude Desktop:
@@ -74,7 +75,7 @@ Ask Claude:
 
 This will run the `check_tools` function and show which tools are installed.
 
-**With Docker:** Slither and Mythril will be available (Aderyn not pre-installed) ✅  
+**With Docker:** Slither and Mythril will be available (Aderyn not pre-installed)
 **Without Docker:** Only pattern_analysis available unless you install tools separately
 
 ### 2. Run Pattern Analysis (No Additional Tools Needed)
@@ -143,12 +144,12 @@ Claude will:
 
 The built-in pattern analysis (no external tools needed) checks for:
 
-- ✅ Reentrancy vulnerabilities
-- ✅ tx.origin authentication
-- ✅ selfdestruct usage
-- ✅ delegatecall risks
-- ✅ block.timestamp manipulation
-- ✅ Missing overflow protection (pre-Solidity 0.8)
+- Reentrancy vulnerabilities
+- tx.origin authentication
+- selfdestruct usage
+- delegatecall risks
+- block.timestamp manipulation
+- Missing overflow protection (pre-Solidity 0.8)
 
 ## Tips
 
@@ -166,8 +167,8 @@ The built-in pattern analysis (no external tools needed) checks for:
 
 ## Getting Help
 
-- Check the [README](README.md) for detailed documentation
-- See [CONTRIBUTING.md](CONTRIBUTING.md) for development info
+- Check the [../README.md](../README.md) for detailed documentation
+- See [../CONTRIBUTING.md](../CONTRIBUTING.md) for development info
 - View [CLAUDE_DESKTOP_CONFIG.md](CLAUDE_DESKTOP_CONFIG.md) for configuration details
 - Open an issue on GitHub for bugs or questions
 
