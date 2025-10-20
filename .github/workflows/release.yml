@@ -122,6 +122,9 @@ jobs:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     needs: version
+    # <-- define env to expose a non-secret variable that can be used in 'if'
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -137,7 +140,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log in to Docker Hub (optional)
-        if: ${{ secrets.DOCKERHUB_USERNAME != '' }}
+        # <-- use env in the conditional instead of secrets
+        if: ${{ env.DOCKERHUB_USERNAME != '' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
