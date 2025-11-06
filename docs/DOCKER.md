@@ -5,6 +5,7 @@ This document explains how to use the MCP Smart Contract Auditor with Docker, pr
 ## Overview
 
 The Docker container provides:
+
 - ✅ **Slither** (v0.10.0) - Python-based static analyzer
 - ✅ **Mythril** (v0.24.8) - Symbolic execution analyzer
 - ⚠️ **Aderyn** (optional) - Not pre-installed due to build environment SSL issues, can be added manually
@@ -18,25 +19,28 @@ The Docker container provides:
 ### Using Docker Compose (Recommended)
 
 1. **Build the container:**
+
    ```bash
    docker-compose build
    ```
-   
+
    **Build time**: Approximately 5-10 minutes depending on network speed.
-   
+
    **If you encounter SSL certificate errors**, the Dockerfile includes automatic workarounds:
    - GPG signature verification bypass for apt-get
    - Trusted host configuration for pip
    - SSL verification disable for npm
-   
+
    These are necessary for some CI/CD environments with proxy or certificate chain issues.
 
 2. **Run the MCP server:**
+
    ```bash
    docker-compose run --rm mcp-scaudit
    ```
 
 3. **Audit a contract:**
+
    ```bash
    # Place your contracts in ./contracts directory
    mkdir -p contracts
@@ -70,16 +74,19 @@ make run
 ### Using Docker Directly
 
 1. **Build the image:**
+
    ```bash
    docker build -t mcp-scaudit:latest .
    ```
 
 2. **Run the container:**
+
    ```bash
    docker run -i mcp-scaudit:latest
    ```
 
 3. **With contract volume mount:**
+
    ```bash
    docker run -i -v $(pwd)/contracts:/contracts:ro mcp-scaudit:latest
    ```
@@ -91,6 +98,7 @@ make run
 Add to your Claude Desktop configuration:
 
 **macOS/Linux:**
+
 ```json
 {
   "mcpServers": {
@@ -103,6 +111,7 @@ Add to your Claude Desktop configuration:
 ```
 
 **Windows:**
+
 ```json
 {
   "mcpServers": {
@@ -131,7 +140,9 @@ Add to your Claude Desktop configuration:
 ## Volume Mounts
 
 ### Contracts Directory
+
 Mount your contracts for analysis:
+
 ```bash
 docker run -i -v /path/to/contracts:/contracts:ro mcp-scaudit:latest
 ```
@@ -139,6 +150,7 @@ docker run -i -v /path/to/contracts:/contracts:ro mcp-scaudit:latest
 Then in your MCP calls, use `/contracts/YourContract.sol` as the path.
 
 ### Configuration Directory (Optional)
+
 ```bash
 docker run -i -v /path/to/config:/config:ro mcp-scaudit:latest
 ```
@@ -146,11 +158,13 @@ docker run -i -v /path/to/config:/config:ro mcp-scaudit:latest
 ## Building the Image
 
 ### Standard Build
+
 ```bash
 docker build -t mcp-scaudit:latest .
 ```
 
 ### Build with specific versions
+
 ```bash
 docker build \
   --build-arg SLITHER_VERSION=0.10.0 \
@@ -159,6 +173,7 @@ docker build \
 ```
 
 ### Multi-platform Build
+
 ```bash
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
@@ -170,19 +185,22 @@ docker buildx build \
 
 **Note**: Due to dependency conflicts between Slither and Mythril, version checks may produce warnings. The tools will work correctly at runtime despite these warnings.
 
-### Check that the MCP server starts:
+### Check that the MCP server starts
+
 ```bash
 docker run --rm mcp-scaudit:latest sh -c "timeout 2 node dist/index.js" 2>&1 | head -5
 ```
 
 You should see: `MCP Smart Contract Auditor Server running on stdio`
 
-### Test Slither availability:
+### Test Slither availability
+
 ```bash
 docker run --rm --entrypoint python3 mcp-scaudit:latest -c "import slither; print('Slither: OK')"
 ```
 
-### Test Mythril availability:
+### Test Mythril availability
+
 ```bash
 docker run --rm --entrypoint sh mcp-scaudit:latest -c "myth --version 2>&1 | head -1"
 ```
@@ -202,6 +220,7 @@ This mounts your source code and watches for changes.
 ## Container Size Optimization
 
 The container is optimized for size:
+
 - Single-stage build (Rust builder removed due to SSL issues)
 - Slim base images (node:20-slim)
 - Separate installation of Python packages to speed up builds
@@ -213,6 +232,7 @@ Expected image size: ~1.3-1.4GB (including Slither, Mythril, and Node.js runtime
 ## Troubleshooting
 
 ### Container fails to start
+
 ```bash
 # Check logs
 docker-compose logs mcp-scaudit
@@ -222,6 +242,7 @@ docker inspect mcp-scaudit --format='{{.State.Health.Status}}'
 ```
 
 ### Tools not found
+
 ```bash
 # Rebuild without cache
 docker-compose build --no-cache
@@ -231,6 +252,7 @@ docker run --rm mcp-scaudit:latest sh -c "which slither && which aderyn && which
 ```
 
 ### Permission issues with mounted volumes
+
 ```bash
 # Use proper permissions
 chmod -R 755 contracts/
@@ -240,6 +262,7 @@ docker run -i --user $(id -u):$(id -g) -v $(pwd)/contracts:/contracts:ro mcp-sca
 ```
 
 ### Out of memory during build
+
 ```bash
 # Increase Docker memory limit
 # Docker Desktop -> Settings -> Resources -> Memory
@@ -287,6 +310,7 @@ docker-compose build
 ```
 
 **For CI/CD environments:**
+
 ```bash
 # GitHub Actions - add retry logic
 - name: Build Docker image
@@ -325,6 +349,7 @@ docker-compose build
 ## CI/CD Integration
 
 ### GitHub Actions Example
+
 ```yaml
 - name: Run MCP Audit
   run: |
@@ -333,6 +358,7 @@ docker-compose build
 ```
 
 ### GitLab CI Example
+
 ```yaml
 audit:
   image: docker:latest
@@ -346,12 +372,14 @@ audit:
 ## Publishing to Registry
 
 ### Docker Hub
+
 ```bash
 docker tag mcp-scaudit:latest yourusername/mcp-scaudit:latest
 docker push yourusername/mcp-scaudit:latest
 ```
 
 ### GitHub Container Registry
+
 ```bash
 docker tag mcp-scaudit:latest ghcr.io/yourusername/mcp-scaudit:latest
 docker push ghcr.io/yourusername/mcp-scaudit:latest
@@ -366,6 +394,7 @@ docker push ghcr.io/yourusername/mcp-scaudit:latest
 ## Support
 
 For issues related to:
+
 - **Docker setup**: Check this document and Docker logs
 - **MCP server**: See main [README.md](README.md)
 - **Audit tools**: Refer to tool-specific documentation (Slither, Aderyn, Mythril)
