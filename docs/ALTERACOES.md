@@ -2,7 +2,7 @@
 
 ## Problema Identificado
 
-O projeto mcp-scaudit é baseado em Python, mas o Makefile estava configurado incorretamente para utilizar imagens base de Rust e Node.js. Além disso, o Aderyn (ferramenta de auditoria baseada em Rust) não estava sendo incluído na imagem Docker.
+O projeto farofino-mcp é baseado em Python, mas o Makefile estava configurado incorretamente para utilizar imagens base de Rust e Node.js. Além disso, o Aderyn (ferramenta de auditoria baseada em Rust) não estava sendo incluído na imagem Docker.
 
 ## Alterações Realizadas
 
@@ -107,7 +107,7 @@ Se o Aderyn não estiver disponível na imagem construída, você pode instalá-
 
 ```bash
 # Entrar no container como root
-docker run --rm -it --entrypoint /bin/bash --user root mcp-scaudit:latest
+docker run --rm -it --entrypoint /bin/bash --user root farofino-mcp:latest
 
 # Dentro do container, instalar Aderyn
 cargo install aderyn

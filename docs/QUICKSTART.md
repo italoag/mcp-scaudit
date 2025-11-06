@@ -10,8 +10,8 @@ Get started with the MCP Smart Contract Auditor in minutes!
 
 ```bash
 # Clone and build
-git clone https://github.com/italoag/mcp-scaudit.git
-cd mcp-scaudit
+git clone https://github.com/italoag/farofino-mcp.git
+cd farofino-mcp
 docker-compose build
 ```
 
@@ -21,8 +21,8 @@ Configure Claude Desktop:
   "mcpServers": {
     "scaudit": {
       "command": "docker-compose",
-      "args": ["run", "--rm", "mcp-scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "args": ["run", "--rm", "farofino-mcp"],
+      "cwd": "/path/to/farofino-mcp"
     }
   }
 }
@@ -42,7 +42,7 @@ No installation needed! Just configure Claude Desktop:
   "mcpServers": {
     "scaudit": {
       "command": "npx",
-      "args": ["-y", "mcp-scaudit"]
+      "args": ["-y", "farofino-mcp"]
     }
   }
 }
@@ -52,7 +52,7 @@ No installation needed! Just configure Claude Desktop:
 
 ### Option 3: Global Installation
 ```bash
-npm install -g mcp-scaudit
+npm install -g farofino-mcp
 ```
 
 Then configure Claude Desktop:
@@ -60,7 +60,7 @@ Then configure Claude Desktop:
 {
   "mcpServers": {
     "scaudit": {
-      "command": "mcp-scaudit"
+      "command": "farofino-mcp"
     }
   }
 }

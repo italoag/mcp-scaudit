@@ -18,7 +18,7 @@ To audit these contracts, use the MCP server tools:
 
 ```bash
 # Start the MCP server
-npx mcp-scaudit
+npx farofino-mcp
 
 # Then use the tools through your MCP client:
 # 1. Read the contract

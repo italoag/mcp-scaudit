@@ -27,7 +27,7 @@ COMPOSE_HTTP_TIMEOUT=300 docker-compose build
 
 ### 4. Use Host Network (For CI/CD)
 ```bash
-DOCKER_BUILDKIT=1 docker build --network=host -t mcp-scaudit:latest .
+DOCKER_BUILDKIT=1 docker build --network=host -t farofino-mcp:latest .
 ```
 
 ### 5. Behind Corporate Proxy

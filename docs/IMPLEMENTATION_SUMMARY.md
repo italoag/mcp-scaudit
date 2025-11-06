@@ -9,8 +9,8 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 ### 1. Complete Python Rewrite ✅
 
 **Files Created:**
-- `mcp_scaudit/__init__.py` - Package initialization with version
-- `mcp_scaudit/__main__.py` - Main server implementation (432 lines)
+- `farofino_mcp/__init__.py` - Package initialization with version
+- `farofino_mcp/__main__.py` - Main server implementation (432 lines)
 - `pyproject.toml` - Python project configuration
 - `requirements.txt` - Python dependencies
 - `setup.py` - Setup configuration for backwards compatibility
@@ -36,7 +36,7 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 
 **Changes:**
 - Base image: `node:20-slim` → `python:3.12-slim`
-- Entry point: `node dist/index.js` → `python3 -m mcp_scaudit`
+- Entry point: `node dist/index.js` → `python3 -m farofino_mcp`
 - Python audit tools (Slither, Mythril) pre-installed
 - SSL certificate trust flags added to handle network issues
 - Optimized layer caching for faster builds
@@ -204,24 +204,24 @@ Each release includes:
 
 ```bash
 # Clone repository
-git clone https://github.com/italoag/mcp-scaudit.git
-cd mcp-scaudit
+git clone https://github.com/italoag/farofino-mcp.git
+cd farofino-mcp
 
 # Install dependencies
 pip install -r requirements.txt
 
 # Run server
-python3 -m mcp_scaudit
+python3 -m farofino_mcp
 ```
 
 ### With Docker
 
 ```bash
 # Pull image
-docker pull ghcr.io/italoag/mcp-scaudit:latest
+docker pull ghcr.io/italoag/farofino-mcp:latest
 
 # Run
-docker run -i --rm ghcr.io/italoag/mcp-scaudit:latest
+docker run -i --rm ghcr.io/italoag/farofino-mcp:latest
 ```
 
 ### Claude Desktop Configuration
@@ -231,8 +231,8 @@ docker run -i --rm ghcr.io/italoag/mcp-scaudit:latest
   "mcpServers": {
     "scaudit": {
       "command": "python3",
-      "args": ["-m", "mcp_scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "args": ["-m", "farofino_mcp"],
+      "cwd": "/path/to/farofino-mcp"
     }
   }
 }
@@ -244,7 +244,7 @@ docker run -i --rm ghcr.io/italoag/mcp-scaudit:latest
 
 1. **Runtime:** Node.js → Python 3.8+
 2. **Installation:** npm → pip
-3. **Entry point:** `npx mcp-scaudit` → `python3 -m mcp_scaudit`
+3. **Entry point:** `npx farofino-mcp` → `python3 -m farofino_mcp`
 4. **Configuration:** Claude Desktop config needs update
 
 ### Compatibility
@@ -260,14 +260,14 @@ docker run -i --rm ghcr.io/italoag/mcp-scaudit:latest
 1. Remove Node.js artifacts
 2. Install Python dependencies
 3. Update Claude Desktop configuration
-4. Run `python3 -m mcp_scaudit`
+4. Run `python3 -m farofino_mcp`
 
 ## Future Enhancements
 
 Recommended next steps:
 
 1. **Testing:** Add pytest-based test suite
-2. **PyPI:** Publish package to PyPI for `pip install mcp-scaudit`
+2. **PyPI:** Publish package to PyPI for `pip install farofino-mcp`
 3. **CI:** Add automated tests to workflow
 4. **Linting:** Add black, flake8, mypy to CI
 5. **Security:** Add Dependabot and security scanning
@@ -279,7 +279,7 @@ Recommended next steps:
 
 ### Common Issues
 
-1. **Module not found:** Ensure you run `python3 -m mcp_scaudit` from project root
+1. **Module not found:** Ensure you run `python3 -m farofino_mcp` from project root
 2. **MCP SDK not found:** Run `pip install -r requirements.txt`
 3. **Docker build fails:** SSL certificate issues - already handled with trust flags
 4. **Audit tools not found:** Install separately: `pip install slither-analyzer mythril`
@@ -299,14 +299,14 @@ The Python version is more maintainable, better integrated with security tools, 
 
 ## Credits
 
-- Original TypeScript implementation by the mcp-scaudit team
+- Original TypeScript implementation by the farofino-mcp team
 - Python rewrite completed as requested
 - CI/CD pipeline designed for automatic releases
 
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/italoag/mcp-scaudit/issues
+- GitHub Issues: https://github.com/italoag/farofino-mcp/issues
 - Documentation: See PYTHON_MIGRATION.md and CI_CD_SETUP.md
 - Contributing: See CONTRIBUTING.md
 

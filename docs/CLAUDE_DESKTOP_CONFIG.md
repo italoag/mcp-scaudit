@@ -24,8 +24,8 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
   "mcpServers": {
     "scaudit": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "mcp-scaudit:latest"],
-      "cwd": "/absolute/path/to/mcp-scaudit"
+      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "farofino-mcp:latest"],
+      "cwd": "/absolute/path/to/farofino-mcp"
     }
   }
 }
@@ -37,8 +37,8 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
   "mcpServers": {
     "scaudit": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "mcp-scaudit:latest"],
-      "cwd": "C:\\path\\to\\mcp-scaudit"
+      "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "farofino-mcp:latest"],
+      "cwd": "C:\\path\\to\\farofino-mcp"
     }
   }
 }
@@ -51,8 +51,8 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
   "mcpServers": {
     "scaudit": {
       "command": "docker-compose",
-      "args": ["run", "--rm", "mcp-scaudit"],
-      "cwd": "/absolute/path/to/mcp-scaudit"
+      "args": ["run", "--rm", "farofino-mcp"],
+      "cwd": "/absolute/path/to/farofino-mcp"
     }
   }
 }
@@ -73,7 +73,7 @@ See [DOCKER.md](DOCKER.md) for detailed Docker setup.
   "mcpServers": {
     "scaudit": {
       "command": "npx",
-      "args": ["-y", "mcp-scaudit"]
+      "args": ["-y", "farofino-mcp"]
     }
   }
 }
@@ -81,13 +81,13 @@ See [DOCKER.md](DOCKER.md) for detailed Docker setup.
 
 ### Option 4: Using global installation
 
-If you've installed the package globally with `npm install -g mcp-scaudit`:
+If you've installed the package globally with `npm install -g farofino-mcp`:
 
 ```json
 {
   "mcpServers": {
     "scaudit": {
-      "command": "mcp-scaudit"
+      "command": "farofino-mcp"
     }
   }
 }
@@ -102,7 +102,7 @@ If you're developing or testing locally:
   "mcpServers": {
     "scaudit": {
       "command": "node",
-      "args": ["/path/to/mcp-scaudit/dist/index.js"]
+      "args": ["/path/to/farofino-mcp/dist/index.js"]
     }
   }
 }
@@ -117,7 +117,7 @@ You can have multiple MCP servers configured at once:
   "mcpServers": {
     "scaudit": {
       "command": "npx",
-      "args": ["-y", "mcp-scaudit"]
+      "args": ["-y", "farofino-mcp"]
     },
     "filesystem": {
       "command": "npx",

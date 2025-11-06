@@ -1,4 +1,4 @@
-# Docker Build Guide for MCP-scaudit
+# Docker Build Guide for farofino-mcp
 
 ## Overview
 
@@ -114,7 +114,7 @@ If Aderyn is not available in your built image, you can install it manually:
 
 ```bash
 # Enter the container as root
-docker run --rm -it --entrypoint /bin/bash --user root mcp-scaudit:latest
+docker run --rm -it --entrypoint /bin/bash --user root farofino-mcp:latest
 
 # Inside the container, install Aderyn
 cargo install aderyn

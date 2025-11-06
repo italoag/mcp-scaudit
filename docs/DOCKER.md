@@ -36,7 +36,7 @@ The Docker container provides:
 2. **Run the MCP server:**
 
    ```bash
-   docker-compose run --rm mcp-scaudit
+   docker-compose run --rm farofino-mcp
    ```
 
 3. **Audit a contract:**
@@ -47,7 +47,7 @@ The Docker container provides:
    cp YourContract.sol contracts/
    
    # Run audit
-   docker-compose run --rm mcp-scaudit
+   docker-compose run --rm farofino-mcp
    ```
 
 ### Using Makefile (Recommended for Development)
@@ -76,19 +76,19 @@ make run
 1. **Build the image:**
 
    ```bash
-   docker build -t mcp-scaudit:latest .
+   docker build -t farofino-mcp:latest .
    ```
 
 2. **Run the container:**
 
    ```bash
-   docker run -i mcp-scaudit:latest
+   docker run -i farofino-mcp:latest
    ```
 
 3. **With contract volume mount:**
 
    ```bash
-   docker run -i -v $(pwd)/contracts:/contracts:ro mcp-scaudit:latest
+   docker run -i -v $(pwd)/contracts:/contracts:ro farofino-mcp:latest
    ```
 
 ## Configuration for Claude Desktop
@@ -104,7 +104,7 @@ Add to your Claude Desktop configuration:
   "mcpServers": {
     "scaudit": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "mcp-scaudit:latest"]
+      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "farofino-mcp:latest"]
     }
   }
 }
@@ -117,7 +117,7 @@ Add to your Claude Desktop configuration:
   "mcpServers": {
     "scaudit": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "mcp-scaudit:latest"]
+      "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "farofino-mcp:latest"]
     }
   }
 }
@@ -130,8 +130,8 @@ Add to your Claude Desktop configuration:
   "mcpServers": {
     "scaudit": {
       "command": "docker-compose",
-      "args": ["run", "--rm", "mcp-scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "args": ["run", "--rm", "farofino-mcp"],
+      "cwd": "/path/to/farofino-mcp"
     }
   }
 }
@@ -144,7 +144,7 @@ Add to your Claude Desktop configuration:
 Mount your contracts for analysis:
 
 ```bash
-docker run -i -v /path/to/contracts:/contracts:ro mcp-scaudit:latest
+docker run -i -v /path/to/contracts:/contracts:ro farofino-mcp:latest
 ```
 
 Then in your MCP calls, use `/contracts/YourContract.sol` as the path.
@@ -152,7 +152,7 @@ Then in your MCP calls, use `/contracts/YourContract.sol` as the path.
 ### Configuration Directory (Optional)
 
 ```bash
-docker run -i -v /path/to/config:/config:ro mcp-scaudit:latest
+docker run -i -v /path/to/config:/config:ro farofino-mcp:latest
 ```
 
 ## Building the Image
@@ -160,7 +160,7 @@ docker run -i -v /path/to/config:/config:ro mcp-scaudit:latest
 ### Standard Build
 
 ```bash
-docker build -t mcp-scaudit:latest .
+docker build -t farofino-mcp:latest .
 ```
 
 ### Build with specific versions
@@ -169,7 +169,7 @@ docker build -t mcp-scaudit:latest .
 docker build \
   --build-arg SLITHER_VERSION=0.10.0 \
   --build-arg MYTHRIL_VERSION=0.24.8 \
-  -t mcp-scaudit:custom .
+  -t farofino-mcp:custom .
 ```
 
 ### Multi-platform Build
@@ -177,7 +177,7 @@ docker build \
 ```bash
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t mcp-scaudit:latest \
+  -t farofino-mcp:latest \
   --push .
 ```
 
@@ -188,7 +188,7 @@ docker buildx build \
 ### Check that the MCP server starts
 
 ```bash
-docker run --rm mcp-scaudit:latest sh -c "timeout 2 node dist/index.js" 2>&1 | head -5
+docker run --rm farofino-mcp:latest sh -c "timeout 2 node dist/index.js" 2>&1 | head -5
 ```
 
 You should see: `MCP Smart Contract Auditor Server running on stdio`
@@ -196,13 +196,13 @@ You should see: `MCP Smart Contract Auditor Server running on stdio`
 ### Test Slither availability
 
 ```bash
-docker run --rm --entrypoint python3 mcp-scaudit:latest -c "import slither; print('Slither: OK')"
+docker run --rm --entrypoint python3 farofino-mcp:latest -c "import slither; print('Slither: OK')"
 ```
 
 ### Test Mythril availability
 
 ```bash
-docker run --rm --entrypoint sh mcp-scaudit:latest -c "myth --version 2>&1 | head -1"
+docker run --rm --entrypoint sh farofino-mcp:latest -c "myth --version 2>&1 | head -1"
 ```
 
 **Note**: Aderyn is not pre-installed in the Docker image due to SSL certificate issues during build. If needed, you can install it separately.
@@ -212,7 +212,7 @@ docker run --rm --entrypoint sh mcp-scaudit:latest -c "myth --version 2>&1 | hea
 For development with hot reload:
 
 ```bash
-docker-compose --profile dev up mcp-scaudit-dev
+docker-compose --profile dev up farofino-mcp-dev
 ```
 
 This mounts your source code and watches for changes.
@@ -235,10 +235,10 @@ Expected image size: ~1.3-1.4GB (including Slither, Mythril, and Node.js runtime
 
 ```bash
 # Check logs
-docker-compose logs mcp-scaudit
+docker-compose logs farofino-mcp
 
 # Verify health check
-docker inspect mcp-scaudit --format='{{.State.Health.Status}}'
+docker inspect farofino-mcp --format='{{.State.Health.Status}}'
 ```
 
 ### Tools not found
@@ -248,7 +248,7 @@ docker inspect mcp-scaudit --format='{{.State.Health.Status}}'
 docker-compose build --no-cache
 
 # Verify tools in container
-docker run --rm mcp-scaudit:latest sh -c "which slither && which aderyn && which myth"
+docker run --rm farofino-mcp:latest sh -c "which slither && which aderyn && which myth"
 ```
 
 ### Permission issues with mounted volumes
@@ -258,7 +258,7 @@ docker run --rm mcp-scaudit:latest sh -c "which slither && which aderyn && which
 chmod -R 755 contracts/
 
 # Or run as current user
-docker run -i --user $(id -u):$(id -g) -v $(pwd)/contracts:/contracts:ro mcp-scaudit:latest
+docker run -i --user $(id -u):$(id -g) -v $(pwd)/contracts:/contracts:ro farofino-mcp:latest
 ```
 
 ### Out of memory during build
@@ -268,7 +268,7 @@ docker run -i --user $(id -u):$(id -g) -v $(pwd)/contracts:/contracts:ro mcp-sca
 # Docker Desktop -> Settings -> Resources -> Memory
 
 # Or build with resource limits
-docker build --memory=4g -t mcp-scaudit:latest .
+docker build --memory=4g -t farofino-mcp:latest .
 ```
 
 ### Network timeout when pulling images
@@ -285,7 +285,7 @@ If you encounter timeout errors like `failed to resolve source metadata` or `dia
 }
 
 # Solution 2: Use BuildKit with host network (better for CI/CD)
-DOCKER_BUILDKIT=1 docker build --network=host -t mcp-scaudit:latest .
+DOCKER_BUILDKIT=1 docker build --network=host -t farofino-mcp:latest .
 
 # Solution 3: Pull base images first (manual retry)
 docker pull rust:1.75-slim
@@ -353,8 +353,8 @@ docker-compose build
 ```yaml
 - name: Run MCP Audit
   run: |
-    docker build -t mcp-scaudit:latest .
-    docker run -i -v ${{ github.workspace }}/contracts:/contracts:ro mcp-scaudit:latest
+    docker build -t farofino-mcp:latest .
+    docker run -i -v ${{ github.workspace }}/contracts:/contracts:ro farofino-mcp:latest
 ```
 
 ### GitLab CI Example
@@ -365,8 +365,8 @@ audit:
   services:
     - docker:dind
   script:
-    - docker build -t mcp-scaudit:latest .
-    - docker run -i -v $(pwd)/contracts:/contracts:ro mcp-scaudit:latest
+    - docker build -t farofino-mcp:latest .
+    - docker run -i -v $(pwd)/contracts:/contracts:ro farofino-mcp:latest
 ```
 
 ## Publishing to Registry
@@ -374,15 +374,15 @@ audit:
 ### Docker Hub
 
 ```bash
-docker tag mcp-scaudit:latest yourusername/mcp-scaudit:latest
-docker push yourusername/mcp-scaudit:latest
+docker tag farofino-mcp:latest yourusername/farofino-mcp:latest
+docker push yourusername/farofino-mcp:latest
 ```
 
 ### GitHub Container Registry
 
 ```bash
-docker tag mcp-scaudit:latest ghcr.io/yourusername/mcp-scaudit:latest
-docker push ghcr.io/yourusername/mcp-scaudit:latest
+docker tag farofino-mcp:latest ghcr.io/yourusername/farofino-mcp:latest
+docker push ghcr.io/yourusername/farofino-mcp:latest
 ```
 
 ## Additional Resources

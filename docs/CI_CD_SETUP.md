@@ -48,7 +48,7 @@ The workflow is triggered on:
 **Steps:**
 1. Sets up Python 3.12
 2. Installs build tools (`build`, `twine`)
-3. Updates version in `pyproject.toml` and `mcp_scaudit/__init__.py`
+3. Updates version in `pyproject.toml` and `farofino_mcp/__init__.py`
 4. Builds packages:
    - Source distribution (`.tar.gz`)
    - Wheel distribution (`.whl`)
@@ -56,8 +56,8 @@ The workflow is triggered on:
 6. Uploads packages as artifacts
 
 **Outputs:**
-- `mcp-scaudit-{version}.tar.gz`
-- `mcp_scaudit-{version}-py3-none-any.whl`
+- `farofino-mcp-{version}.tar.gz`
+- `farofino_mcp-{version}-py3-none-any.whl`
 
 #### 3. Build and Push Docker Image (`docker`)
 
@@ -75,9 +75,9 @@ The workflow is triggered on:
 
 **Image Tags:**
 ```
-ghcr.io/italoag/mcp-scaudit:latest
-ghcr.io/italoag/mcp-scaudit:v0.2.0
-ghcr.io/italoag/mcp-scaudit:0.2.0
+ghcr.io/italoag/farofino-mcp:latest
+ghcr.io/italoag/farofino-mcp:v0.2.0
+ghcr.io/italoag/farofino-mcp:0.2.0
 ```
 
 #### 4. Create GitHub Release (`release`)
@@ -161,7 +161,7 @@ After a successful release:
 
 ### 1. GitHub Release
 
-- Visit: `https://github.com/italoag/mcp-scaudit/releases`
+- Visit: `https://github.com/italoag/farofino-mcp/releases`
 - Contains:
   - Version tag
   - Changelog
@@ -172,19 +172,19 @@ After a successful release:
 
 Pull the latest image:
 ```bash
-docker pull ghcr.io/italoag/mcp-scaudit:latest
+docker pull ghcr.io/italoag/farofino-mcp:latest
 ```
 
 Or a specific version:
 ```bash
-docker pull ghcr.io/italoag/mcp-scaudit:0.2.0
+docker pull ghcr.io/italoag/farofino-mcp:0.2.0
 ```
 
 ### 3. Python Packages
 
 Available as release assets, can be installed with:
 ```bash
-pip install https://github.com/italoag/mcp-scaudit/releases/download/v0.2.0/mcp-scaudit-0.2.0.tar.gz
+pip install https://github.com/italoag/farofino-mcp/releases/download/v0.2.0/farofino-mcp-0.2.0.tar.gz
 ```
 
 ## Configuration
@@ -256,8 +256,8 @@ twine check dist/*
 ### Test Docker build
 
 ```bash
-docker build -t mcp-scaudit:test .
-docker run -i --rm mcp-scaudit:test
+docker build -t farofino-mcp:test .
+docker run -i --rm farofino-mcp:test
 ```
 
 ## Best Practices
@@ -282,4 +282,4 @@ docker run -i --rm mcp-scaudit:test
 For issues with the CI/CD pipeline:
 1. Check workflow logs in Actions tab
 2. Review this documentation
-3. Open an issue: https://github.com/italoag/mcp-scaudit/issues
+3. Open an issue: https://github.com/italoag/farofino-mcp/issues

@@ -19,7 +19,7 @@ The Makefile was not aligned with the Python project version and was incorrect. 
 |-------|--------|-------|
 | Base images | `docker pull rust:1.75-slim`<br>`docker pull node:20-slim` | `docker pull python:3.12-slim` |
 | Docker Compose | `docker-compose build` | `docker compose build` |
-| Server verification | `node dist/index.js` | `python3 -m mcp_scaudit` |
+| Server verification | `node dist/index.js` | `python3 -m farofino_mcp` |
 | Tool checks | Only Slither and Mythril | Slither, Mythril, and Aderyn (optional) |
 
 **All Makefile Commands Updated:**

@@ -63,13 +63,13 @@ Repository = "https://github.com/italoag/farofino-mcp"
 Issues = "https://github.com/italoag/farofino-mcp/issues"
 
 [project.scripts]
-farofino-mcp = "mcp_scaudit.__main__:run"
+farofino-mcp = "farofino_mcp.__main__:run"
 
 [tool.setuptools]
-packages = ["mcp_scaudit"]
+packages = ["farofino_mcp"]
 
 [tool.setuptools.package-data]
-mcp_scaudit = ["py.typed"]
+farofino_mcp = ["py.typed"]
 
 [tool.black]
 line-length = 100

@@ -25,7 +25,7 @@ node dist/index.js
 **After (Python):**
 ```bash
 pip install -r requirements.txt
-python3 -m mcp_scaudit
+python3 -m farofino_mcp
 ```
 
 ### 2. Package Structure
@@ -40,7 +40,7 @@ tsconfig.json
 
 **After:**
 ```
-mcp_scaudit/
+farofino_mcp/
 ├── __init__.py
 ├── __main__.py
 requirements.txt
@@ -56,7 +56,7 @@ setup.py
   "mcpServers": {
     "scaudit": {
       "command": "npx",
-      "args": ["mcp-scaudit"]
+      "args": ["farofino-mcp"]
     }
   }
 }
@@ -68,8 +68,8 @@ setup.py
   "mcpServers": {
     "scaudit": {
       "command": "python3",
-      "args": ["-m", "mcp_scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "args": ["-m", "farofino_mcp"],
+      "cwd": "/path/to/farofino-mcp"
     }
   }
 }
@@ -80,7 +80,7 @@ Or with pip installation:
 {
   "mcpServers": {
     "scaudit": {
-      "command": "mcp-scaudit"
+      "command": "farofino-mcp"
     }
   }
 }
@@ -91,13 +91,13 @@ Or with pip installation:
 **Dockerfile Changes:**
 - Base image changed from `node:20-slim` to `python:3.12-slim`
 - Python dependencies installed via pip instead of npm
-- Entry point changed to `python3 -m mcp_scaudit`
+- Entry point changed to `python3 -m farofino_mcp`
 
 **Docker Compose:**
 ```bash
 # Build and run remains the same
 docker-compose build
-docker-compose run --rm mcp-scaudit
+docker-compose run --rm farofino-mcp
 ```
 
 ### 5. CI/CD Pipeline
@@ -113,7 +113,7 @@ New GitHub Actions workflow (`.github/workflows/release.yml`) includes:
 
 - **Docker image publishing**: Publishes to GitHub Container Registry
   - Tagged with version number and `latest`
-  - Example: `ghcr.io/italoag/mcp-scaudit:0.1.0`
+  - Example: `ghcr.io/italoag/farofino-mcp:0.1.0`
 
 - **GitHub releases**: Automatically creates releases with changelog
 
@@ -122,24 +122,24 @@ New GitHub Actions workflow (`.github/workflows/release.yml`) includes:
 ### 1. From Source
 
 ```bash
-git clone https://github.com/italoag/mcp-scaudit.git
-cd mcp-scaudit
+git clone https://github.com/italoag/farofino-mcp.git
+cd farofino-mcp
 pip install -r requirements.txt
-python3 -m mcp_scaudit
+python3 -m farofino_mcp
 ```
 
 ### 2. With pip (when published)
 
 ```bash
-pip install mcp-scaudit
-mcp-scaudit
+pip install farofino-mcp
+farofino-mcp
 ```
 
 ### 3. With Docker
 
 ```bash
-docker pull ghcr.io/italoag/mcp-scaudit:latest
-docker run -i --rm ghcr.io/italoag/mcp-scaudit:latest
+docker pull ghcr.io/italoag/farofino-mcp:latest
+docker run -i --rm ghcr.io/italoag/farofino-mcp:latest
 ```
 
 ## Functionality
@@ -165,14 +165,14 @@ python3 -m pytest
 
 ```bash
 pip install black
-black mcp_scaudit/
+black farofino_mcp/
 ```
 
 ### Type Checking
 
 ```bash
 pip install mypy
-mypy mcp_scaudit/
+mypy farofino_mcp/
 ```
 
 ## Migration Notes
@@ -184,7 +184,7 @@ If you were using the TypeScript version:
 1. Remove Node.js dependencies: `rm -rf node_modules package-lock.json`
 2. Install Python dependencies: `pip install -r requirements.txt`
 3. Update Claude Desktop config (see Configuration section above)
-4. Run: `python3 -m mcp_scaudit`
+4. Run: `python3 -m farofino_mcp`
 
 ### For Contributors
 
@@ -200,7 +200,7 @@ If you were using the TypeScript version:
 
 **Solution:** Ensure you're in the project root and run:
 ```bash
-python3 -m mcp_scaudit
+python3 -m farofino_mcp
 ```
 
 ### Issue: MCP SDK not found
@@ -232,4 +232,4 @@ For issues or questions about the Python migration, please:
 
 1. Check this document first
 2. Review the [README.md](README.md)
-3. Open an issue on GitHub: https://github.com/italoag/mcp-scaudit/issues
+3. Open an issue on GitHub: https://github.com/italoag/farofino-mcp/issues

@@ -69,7 +69,7 @@ docker-compose build
 
 **Para CI/CD:**
 ```bash
-DOCKER_BUILDKIT=1 docker build --network=host -t mcp-scaudit:latest .
+DOCKER_BUILDKIT=1 docker build --network=host -t farofino-mcp:latest .
 ```
 
 **Com aumento de timeout:**
@@ -113,7 +113,7 @@ O aviso de maiúsculas foi eliminado e 6 soluções diferentes foram implementad
 ## Começar Agora
 
 ```bash
-cd mcp-scaudit
+cd farofino-mcp
 make build-retry  # Build com retry automático
 make verify       # Verificar instalações
 make run          # Executar o servidor

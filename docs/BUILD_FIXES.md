@@ -78,7 +78,7 @@ make verify
 make test
 
 # Run
-docker-compose run --rm mcp-scaudit
+docker-compose run --rm farofino-mcp
 ```
 
 ## Notes for Future Builds
