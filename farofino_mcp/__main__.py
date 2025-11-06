@@ -21,7 +21,7 @@ from mcp.types import Tool, TextContent
 
 TOOL_INSTALL_INSTRUCTIONS: Dict[str, str] = {
     "slither": "pip install slither-analyzer",
-    "aderyn": "cargo install --locked aderyn",
+    "aderyn": "curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash && CYFRINUP_ONLY_INSTALL=aderyn cyfrinup",
     "mythril": "pip install mythril",
 }
 
@@ -133,7 +133,11 @@ async def run_aderyn(contract_path: Optional[str]) -> AuditResult:
         if not command_exists("aderyn"):
             return AuditResult(
                 success=False,
-                error="Aderyn is not installed. Please install it with: cargo install aderyn"
+                error=(
+                    "Aderyn is not installed. Install it with Cyfrinup: "
+                    "curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash && "
+                    "CYFRINUP_ONLY_INSTALL=aderyn cyfrinup"
+                ),
             )
         
         result = subprocess.run(

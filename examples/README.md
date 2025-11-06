@@ -27,8 +27,11 @@ read_contract with contract_path="examples/SimpleToken.sol"
 # 2. Run pattern analysis
 pattern_analysis with contract_path="examples/SimpleToken.sol"
 
-# 3. Run Slither (if installed)
+# 3. Run Slither
 slither_audit with contract_path="examples/SimpleToken.sol"
+
+# 4. Run Aderyn
+aderyn_audit with contract_path="examples/SimpleToken.sol"
 ```
 
 ## Creating Your Own Test Contracts
@@ -38,6 +41,6 @@ You can create your own test contracts and place them in this directory or anywh
 ### Tips for Testing
 
 1. **Start Simple**: Begin with pattern_analysis which requires no external tools
-2. **Install Tools**: For comprehensive analysis, install Slither, Aderyn, and Mythril
+2. **Install Tools**: With Docker all tools are bundled; for local setups install Slither (`pip install slither-analyzer`), Mythril (`pip install mythril`), and Aderyn via Cyfrinup (`curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash && CYFRINUP_ONLY_INSTALL=aderyn cyfrinup`)
 3. **Compare Results**: Run multiple tools on the same contract to get different perspectives
 4. **Test Edge Cases**: Create contracts with known vulnerabilities to verify detection

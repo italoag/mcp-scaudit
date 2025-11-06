@@ -16,10 +16,11 @@ docker-compose build
 ```
 
 Configure Claude Desktop:
+
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker-compose",
       "args": ["run", "--rm", "farofino-mcp"],
       "cwd": "/path/to/farofino-mcp"
@@ -28,19 +29,20 @@ Configure Claude Desktop:
 }
 ```
 
-**Benefits:** ✅ Slither and Mythril pre-installed | ✅ No dependency issues | ✅ Works everywhere
+Swap `/path/to/farofino-mcp` for the absolute path to the repository on your machine so `docker-compose` can find the project files.
 
-**Note:** Aderyn is not pre-installed in Docker due to build environment issues, but Slither and Mythril provide comprehensive coverage.
+**Benefits:** ✅ Slither, Aderyn, and Mythril pre-installed | ✅ No dependency issues | ✅ Works everywhere
 
 See [DOCKER.md](DOCKER.md) for detailed Docker setup.
 
 ### Option 2: Using npx (No Docker)
+
 No installation needed! Just configure Claude Desktop:
 
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "npx",
       "args": ["-y", "farofino-mcp"]
     }
@@ -51,15 +53,17 @@ No installation needed! Just configure Claude Desktop:
 **Note:** External tools (Slither, Aderyn, Mythril) must be installed separately.
 
 ### Option 3: Global Installation
+
 ```bash
 npm install -g farofino-mcp
 ```
 
 Then configure Claude Desktop:
+
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "farofino-mcp"
     }
   }
@@ -69,17 +73,19 @@ Then configure Claude Desktop:
 ## First Steps
 
 ### 1. Check Available Tools
+
 Ask Claude:
 > "What audit tools are available?"
 
 This will run the `check_tools` function and show which tools are installed.
 
-**With Docker:** Slither and Mythril will be available (Aderyn not pre-installed) ✅  
+**With Docker:** Slither, Aderyn, and Mythril will be available ✅  
 **Without Docker:** Only pattern_analysis available unless you install tools separately
 
 ### 2. Run Pattern Analysis (No Additional Tools Needed)
+
 Ask Claude:
-> "Can you analyze this contract for security issues?" 
+> "Can you analyze this contract for security issues?"
 
 Then paste your Solidity contract code. Claude will use the `pattern_analysis` tool which works out of the box.
 
@@ -90,16 +96,20 @@ Then paste your Solidity contract code. Claude will use the `pattern_analysis` t
 For non-Docker setup, install these tools for comprehensive analysis:
 
 **Slither** (Python-based, highly recommended):
+
 ```bash
 pip install slither-analyzer
 ```
 
-**Aderyn** (Rust-based):
+**Aderyn** (Rust-based via Cyfrinup):
+
 ```bash
-cargo install aderyn
+curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash
+CYFRINUP_ONLY_INSTALL=aderyn cyfrinup
 ```
 
 **Mythril** (Symbolic execution):
+
 ```bash
 pip install mythril
 ```
@@ -107,6 +117,7 @@ pip install mythril
 ## Example Usage
 
 ### With Docker - Place Contracts in ./contracts/
+
 ```bash
 # Create contracts directory
 mkdir -p contracts
@@ -119,9 +130,13 @@ Then ask Claude:
 > "Run a security audit on /contracts/MyContract.sol using all available tools"
 
 ### Without Docker - Use Full Paths
+>
 > "Run a security audit on /path/to/MyContract.sol using all available tools"
 
+Replace `/path/to/MyContract.sol` with the real file path on your host system.
+
 Claude will:
+
 1. Check which tools are available
 2. Read the contract
 3. Run pattern analysis
@@ -131,12 +146,15 @@ Claude will:
 7. Summarize findings
 
 ### Quick Pattern Check
+>
 > "Check this contract for common vulnerabilities"
+>
 > ```solidity
 > // paste your contract code
 > ```
 
 ### Compare Tool Results
+>
 > "Run both Slither and pattern analysis on my contract and compare the results"
 
 ## Common Patterns Detected
@@ -174,15 +192,17 @@ The built-in pattern analysis (no external tools needed) checks for:
 ## Example Workflow
 
 1. **Initial Setup** (one time):
+
    ```bash
    pip install slither-analyzer  # Install tools
    ```
 
 2. **Configure Claude Desktop** (one time):
-   Edit config file, add scaudit server, restart Claude
+   Edit config file, add farofino server, restart Claude
 
 3. **Use with Claude**:
    > "Hey Claude, can you audit this smart contract for me?"
+>
    > ```solidity
    > // Your contract code here
    > ```

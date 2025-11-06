@@ -5,12 +5,15 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 ## Configuration File Location
 
 ### macOS
+
 `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ### Windows
+
 `%APPDATA%/Claude/claude_desktop_config.json`
 
 ### Linux
+
 `~/.config/Claude/claude_desktop_config.json`
 
 ## Configuration Options
@@ -19,10 +22,12 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 
 **Best option for having all audit tools (Slither, Aderyn, Mythril) pre-installed:**
 
+> Replace `/absolute/path/to/farofino-mcp` with the full path to this repository on **your host machine** (for example, `/Users/YourUser/projects/farofino-mcp`). Claude invokes the command from the host before Docker starts, so the path must exist locally, not inside the container.
+
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "farofino-mcp:latest"],
       "cwd": "/absolute/path/to/farofino-mcp"
@@ -31,11 +36,12 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 }
 ```
 
-**Note for Windows users:** Replace `${PWD}` with `%CD%`:
+**Note for Windows users:** Replace `${PWD}` with `%CD%`, and update the `cwd` value to the absolute Windows path to the repository (for example, `C:\Users\YourUser\Projects\farofino-mcp`).
+
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "farofino-mcp:latest"],
       "cwd": "C:\\path\\to\\farofino-mcp"
@@ -49,7 +55,7 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker-compose",
       "args": ["run", "--rm", "farofino-mcp"],
       "cwd": "/absolute/path/to/farofino-mcp"
@@ -58,7 +64,10 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 }
 ```
 
+> The `cwd` entry always points to the directory on your computer that contains `docker-compose.yml`. Claude uses it so `docker-compose` can locate the configuration file.
+
 **Benefits:**
+
 - ✅ All tools pre-installed (Slither, Aderyn, Mythril)
 - ✅ No dependency conflicts
 - ✅ Consistent environment
@@ -71,7 +80,7 @@ See [DOCKER.md](DOCKER.md) for detailed Docker setup.
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "npx",
       "args": ["-y", "farofino-mcp"]
     }
@@ -86,7 +95,7 @@ If you've installed the package globally with `npm install -g farofino-mcp`:
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "farofino-mcp"
     }
   }
@@ -100,13 +109,15 @@ If you're developing or testing locally:
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "node",
       "args": ["/path/to/farofino-mcp/dist/index.js"]
     }
   }
 }
 ```
+
+Point `/path/to/farofino-mcp/dist/index.js` to the actual build output on your machine.
 
 ## Multiple Servers Configuration
 
@@ -115,7 +126,7 @@ You can have multiple MCP servers configured at once:
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "npx",
       "args": ["-y", "farofino-mcp"]
     },
@@ -126,6 +137,8 @@ You can have multiple MCP servers configured at once:
   }
 }
 ```
+
+Replace `/path/to/contracts` with the directory you want Claude to access from your host.
 
 ## After Configuration
 
@@ -144,6 +157,8 @@ Once configured, you can ask Claude:
 - "Analyze this contract for common vulnerability patterns"
 - "Read and explain the contract at /path/to/contract.sol"
 
+Update the `/path/to/...` placeholders with the actual contract locations on your system.
+
 ## Troubleshooting
 
 ### Server not appearing in Claude
@@ -157,9 +172,11 @@ Once configured, you can ask Claude:
 
 1. Use the `check_tools` function to see which tools are installed
 2. Install missing tools:
-   - Slither: `pip install slither-analyzer`
-   - Aderyn: `cargo install aderyn`
-   - Mythril: `pip install mythril`
+
+- Slither: `pip install slither-analyzer`
+- Aderyn: `curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash && CYFRINUP_ONLY_INSTALL=aderyn cyfrinup`
+- Mythril: `pip install mythril`
+
 3. Ensure tools are in your system PATH
 
 ### Permission issues

@@ -20,9 +20,10 @@ The Makefile was not aligned with the Python project version and was incorrect. 
 | Base images | `docker pull rust:1.75-slim`<br>`docker pull node:20-slim` | `docker pull python:3.12-slim` |
 | Docker Compose | `docker-compose build` | `docker compose build` |
 | Server verification | `node dist/index.js` | `python3 -m farofino_mcp` |
-| Tool checks | Only Slither and Mythril | Slither, Mythril, and Aderyn (optional) |
+| Tool checks | Only Slither and Mythril | Slither, Mythril, and Aderyn (validated) |
 
 **All Makefile Commands Updated:**
+
 - ✅ `pull-images` - Now pulls Python base image
 - ✅ `build` - Uses docker compose v2 syntax
 - ✅ `build-no-cache` - Uses docker compose v2 syntax
@@ -30,29 +31,29 @@ The Makefile was not aligned with the Python project version and was incorrect. 
 - ✅ `run` - Uses docker compose v2 syntax
 - ✅ `dev` - Uses docker compose v2 syntax
 - ✅ `verify` - Tests Python server and all tools
-- ✅ `test` - Handles optional Aderyn gracefully
+- ✅ `test` - Verifica a disponibilidade do Aderyn instalado via Cyfrinup
 - ✅ `clean` - Uses docker compose v2 syntax
 - ✅ `logs` - Uses docker compose v2 syntax
 
 ### Dockerfile Changes
 
 **Added:**
-- ✅ Rust/Cargo installation via rustup
-- ✅ Aderyn installation attempt with graceful failure handling
-- ✅ curl package for rustup installation
-- ✅ Updated PATH to include cargo binaries
+
+- ✅ Cyfrinup installation to provision the latest Aderyn binary during the build
+- ✅ curl package for Cyfrinup bootstrap
+- ✅ Updated PATH to include Cyfrinup binaries for all users
 - ✅ Clear comments about tool availability
 
 **Structure:**
+
 ```dockerfile
 FROM python:3.12-slim
 # Install system dependencies + curl
-# Install Rust/Cargo for Aderyn
 # Install Python dependencies (mcp)
 # Install Slither (Python-based) ← Always works
 # Install Mythril (Python-based) ← Always works
 # Install project package
-# Attempt Aderyn (Rust-based) ← May fail, handled gracefully
+# Install Aderyn via Cyfrinup (Rust-based) ← Always works (validated)
 # Setup non-root user
 # Configure environment
 ```
@@ -73,43 +74,29 @@ FROM python:3.12-slim
 
 ## Audit Tools Status
 
-### Always Available ✅
+All audit tools are bundled in the Docker image:
+
 - **Slither v0.10.0** (Python-based static analyzer)
 - **Mythril v0.24.8** (Python-based symbolic execution)
-
-### Conditionally Available ⚠️
-- **Aderyn** (Rust-based static analyzer)
-  - Installed if build environment allows
-  - May fail in CI/CD or restricted networks due to SSL issues
-  - Can be installed manually after build if needed
+- **Aderyn** (Rust-based static analyzer delivered via Cyfrinup)
 
 ## Technical Details
 
-### Why Aderyn Installation Might Fail
+### Network Requirements for Aderyn
 
-Aderyn requires Rust/Cargo compilation and downloads from crates.io. This may fail in:
-- CI/CD environments with self-signed certificates
-- Corporate networks with SSL inspection
-- Restricted build environments
-
-**Solution:** The Dockerfile handles this gracefully with:
-```dockerfile
-RUN cargo install aderyn || \
-    echo "WARNING: Aderyn installation failed. You can install it manually later..."
-```
+Aderyn is downloaded via Cyfrinup from the official Cyfrin releases. Ensure that the build environment permits outbound HTTPS traffic to `githubusercontent.com`. If TLS interception is in place, install the appropriate certificate authorities before running the build so the Cyfrinup bootstrap script can complete successfully.
 
 ### Build Time
 
-Expected build times:
-- Without Aderyn: ~5-10 minutes (Python tools only)
-- With Aderyn: ~15-25 minutes (includes Rust compilation)
+Expected build time: ~8-15 minutes (download of Python packages + Cyfrinup binary fetch)
 
 ### Image Size
 
 Expected size: ~1.5-2GB
+
 - Python 3.12 runtime: ~500MB
-- Rust/Cargo toolchain: ~500-800MB
-- Audit tools: ~200-400MB
+- Cyfrinup-managed tooling and Aderyn binary: ~200-300MB
+- Audit tools (Slither, Mythril): ~200-400MB
 
 ## Verification
 
@@ -126,13 +113,13 @@ make verify
 # - Python MCP server starts ✓
 # - Slither available ✓
 # - Mythril available ✓
-# - Aderyn available ✓ or "Not available (SSL issues)" ⚠️
+# - Aderyn available ✓
 ```
 
 ## Files Changed
 
 1. `Makefile` - Complete rewrite for Python project
-2. `Dockerfile` - Added Rust/Cargo and Aderyn support
+2. `Dockerfile` - Added Cyfrinup-based Aderyn provisioning
 3. `DOCKER_BUILD.md` - New comprehensive guide (English)
 4. `ALTERACOES.md` - New change summary (Portuguese)
 
@@ -151,7 +138,7 @@ All requirements from the problem statement have been addressed:
 
 ✅ **Aderyn is included (when possible)** - Dockerfile attempts installation with graceful failure handling
 
-✅ **All necessary components included** - Slither, Mythril always available; Aderyn when environment permits
+✅ **All necessary components included** - Slither, Mythril, and Aderyn ship with every image
 
 ✅ **Comprehensive documentation** - Both in English and Portuguese
 
@@ -159,14 +146,11 @@ All requirements from the problem statement have been addressed:
 
 1. Build the image: `make build`
 2. Verify tools: `make verify`
-3. If Aderyn is not available, either:
-   - Build in a different environment, or
-   - Install manually after build, or
-   - Use Slither and Mythril (both fully functional)
+3. If the build fails while downloading Aderyn, fix outbound HTTPS access to GitHub and rerun the build
 
 ## References
 
-- Slither: https://github.com/crytic/slither
-- Mythril: https://github.com/ConsenSys/mythril
-- Aderyn: https://github.com/Cyfrin/aderyn
-- MCP Protocol: https://github.com/anthropics/mcp
+- Slither: <https://github.com/crytic/slither>
+- Mythril: <https://github.com/ConsenSys/mythril>
+- Aderyn: <https://github.com/Cyfrin/aderyn>
+- MCP Protocol: <https://github.com/anthropics/mcp>

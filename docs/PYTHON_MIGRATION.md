@@ -16,6 +16,7 @@ The MCP Smart Contract Auditor has been rewritten from TypeScript/Node.js to Pyt
 ### 1. Language and Runtime
 
 **Before (TypeScript/Node.js):**
+
 ```bash
 npm install
 npm run build
@@ -23,6 +24,7 @@ node dist/index.js
 ```
 
 **After (Python):**
+
 ```bash
 pip install -r requirements.txt
 python3 -m farofino_mcp
@@ -31,7 +33,8 @@ python3 -m farofino_mcp
 ### 2. Package Structure
 
 **Before:**
-```
+
+```shell
 src/
 ├── index.ts
 package.json
@@ -39,7 +42,8 @@ tsconfig.json
 ```
 
 **After:**
-```
+
+```shell
 farofino_mcp/
 ├── __init__.py
 ├── __main__.py
@@ -51,10 +55,11 @@ setup.py
 ### 3. Configuration
 
 **Claude Desktop Configuration Before:**
+
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "npx",
       "args": ["farofino-mcp"]
     }
@@ -63,10 +68,11 @@ setup.py
 ```
 
 **Claude Desktop Configuration After:**
+
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "python3",
       "args": ["-m", "farofino_mcp"],
       "cwd": "/path/to/farofino-mcp"
@@ -75,11 +81,14 @@ setup.py
 }
 ```
 
+Update `/path/to/farofino-mcp` to point to the real directory that contains this project on your host.
+
 Or with pip installation:
+
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "farofino-mcp"
     }
   }
@@ -89,11 +98,13 @@ Or with pip installation:
 ### 4. Docker
 
 **Dockerfile Changes:**
+
 - Base image changed from `node:20-slim` to `python:3.12-slim`
 - Python dependencies installed via pip instead of npm
 - Entry point changed to `python3 -m farofino_mcp`
 
 **Docker Compose:**
+
 ```bash
 # Build and run remains the same
 docker-compose build
@@ -199,6 +210,7 @@ If you were using the TypeScript version:
 ### Issue: Module not found error
 
 **Solution:** Ensure you're in the project root and run:
+
 ```bash
 python3 -m farofino_mcp
 ```
@@ -206,6 +218,7 @@ python3 -m farofino_mcp
 ### Issue: MCP SDK not found
 
 **Solution:** Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -213,9 +226,11 @@ pip install -r requirements.txt
 ### Issue: Audit tools not found
 
 **Solution:** Install audit tools separately:
+
 ```bash
 pip install slither-analyzer mythril
-cargo install aderyn  # Optional
+curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash
+CYFRINUP_ONLY_INSTALL=aderyn cyfrinup
 ```
 
 ## Future Enhancements
@@ -232,4 +247,4 @@ For issues or questions about the Python migration, please:
 
 1. Check this document first
 2. Review the [README.md](README.md)
-3. Open an issue on GitHub: https://github.com/italoag/farofino-mcp/issues
+3. Open an issue on GitHub: <https://github.com/italoag/farofino-mcp/issues>

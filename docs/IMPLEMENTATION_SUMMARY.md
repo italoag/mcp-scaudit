@@ -9,6 +9,7 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 ### 1. Complete Python Rewrite ✅
 
 **Files Created:**
+
 - `farofino_mcp/__init__.py` - Package initialization with version
 - `farofino_mcp/__main__.py` - Main server implementation (432 lines)
 - `pyproject.toml` - Python project configuration
@@ -16,6 +17,7 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 - `setup.py` - Setup configuration for backwards compatibility
 
 **Key Features Implemented:**
+
 - ✅ Full MCP (Model Context Protocol) server implementation in Python
 - ✅ All 6 audit tools preserved and working:
   - `slither_audit` - Static analysis with Slither
@@ -31,10 +33,12 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 ### 2. Docker Configuration ✅
 
 **Updated Files:**
+
 - `Dockerfile` - Completely rewritten for Python 3.12
 - `docker-compose.yml` - Updated for Python application
 
 **Changes:**
+
 - Base image: `node:20-slim` → `python:3.12-slim`
 - Entry point: `node dist/index.js` → `python3 -m farofino_mcp`
 - Python audit tools (Slither, Mythril) pre-installed
@@ -44,11 +48,13 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 ### 3. CI/CD Pipeline ✅
 
 **New File:**
+
 - `.github/workflows/release.yml` - Complete CI/CD automation (269 lines)
 
 **Pipeline Features:**
 
 #### a) Semantic Versioning
+
 - Automatic version calculation from commit messages
 - Follows conventional commits:
   - `feat!:` or `BREAKING CHANGE:` → Major version bump
@@ -57,18 +63,21 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 - Generates version tag (e.g., `v0.2.0`)
 
 #### b) Python Package Build
+
 - Builds distributable packages (.tar.gz, .whl)
 - Updates version in all files automatically
 - Validates packages with twine
 - Uploads packages as artifacts
 
 #### c) Docker Image Publishing
+
 - Builds Docker image with Buildx
 - Publishes to GitHub Container Registry (ghcr.io)
 - Multiple tags: `latest`, `v{version}`, `{version}`
 - Layer caching for fast builds
 
 #### d) GitHub Release Creation
+
 - Automatically creates releases
 - Includes changelog from commits
 - Attaches Python packages
@@ -108,12 +117,14 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 ### 5. Configuration Updates ✅
 
 **Updated Files:**
+
 - `.gitignore` - Added Python artifacts (\_\_pycache\_\_, *.pyc, etc.)
 - All documentation files updated to reflect Python
 
 ### 6. Testing and Validation ✅
 
 **Tests Performed:**
+
 - ✅ Python syntax validation
 - ✅ Import and module structure
 - ✅ Pattern analysis functionality
@@ -128,7 +139,8 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 ### Architecture Changes
 
 **Before (TypeScript):**
-```
+
+```log
 Node.js Runtime
 └── TypeScript (compiled to JavaScript)
     └── @modelcontextprotocol/sdk
@@ -136,7 +148,8 @@ Node.js Runtime
 ```
 
 **After (Python):**
-```
+
+```log
 Python 3.8+ Runtime
 └── Python (interpreted)
     └── mcp SDK
@@ -146,10 +159,13 @@ Python 3.8+ Runtime
 ### Dependencies
 
 **Python Dependencies:**
+
 - `mcp>=1.0.0` - MCP SDK for Python
-- Optional: `slither-analyzer`, `mythril` (for audit tools)
+- `slither-analyzer` and `mythril` installed in the Docker image for audit tooling
+- Aderyn distributed via Cyfrinup (binary)
 
 **Why Python?**
+
 1. Native integration with security tools (Slither, Mythril are Python-based)
 2. Simpler dependency management
 3. Better ecosystem alignment
@@ -173,15 +189,15 @@ Python 3.8+ Runtime
 
 ### Workflow Steps
 
-```
+```log
 Commit to main
     ↓
 Calculate Version
     ↓
 ┌──────────────────┬──────────────────┐
 │                  │                  │
-Build Python     Build Docker      
-Package          Image             
+│    Build Python  │    Build Docker  │
+│     Package      │       Image      │
 │                  │                  │
 └──────────────────┴──────────────────┘
     ↓
@@ -193,6 +209,7 @@ Publish Artifacts
 ### Release Artifacts
 
 Each release includes:
+
 1. **Git Tag:** `v{version}`
 2. **Python Packages:** `.tar.gz` and `.whl`
 3. **Docker Images:** Multiple tags on ghcr.io
@@ -229,7 +246,7 @@ docker run -i --rm ghcr.io/italoag/farofino-mcp:latest
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "python3",
       "args": ["-m", "farofino_mcp"],
       "cwd": "/path/to/farofino-mcp"
@@ -237,6 +254,8 @@ docker run -i --rm ghcr.io/italoag/farofino-mcp:latest
   }
 }
 ```
+
+Remember to replace `/path/to/farofino-mcp` with the absolute path to the repository on your machine.
 
 ## Migration Impact
 
@@ -257,6 +276,7 @@ docker run -i --rm ghcr.io/italoag/farofino-mcp:latest
 ### For Users
 
 **To migrate:**
+
 1. Remove Node.js artifacts
 2. Install Python dependencies
 3. Update Claude Desktop configuration
@@ -306,7 +326,8 @@ The Python version is more maintainable, better integrated with security tools, 
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/italoag/farofino-mcp/issues
+
+- GitHub Issues: <https://github.com/italoag/farofino-mcp/issues>
 - Documentation: See PYTHON_MIGRATION.md and CI_CD_SETUP.md
 - Contributing: See CONTRIBUTING.md
 

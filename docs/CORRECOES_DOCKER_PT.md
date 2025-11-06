@@ -1,125 +1,75 @@
 # Correções do Docker - Resumo em Português
 
 ## Problema Relatado
-O arquivo Docker estava com erros ao executar `docker-compose build`:
-1. **Aviso**: `FromAsCasing` - problema de maiúsculas/minúsculas na linha 3
-2. **Erro**: Timeout de rede ao baixar imagens base do Docker Hub
+
+O Dockerfile antigo utilizava múltiplas fases com imagens base de Rust e Node.js, exigia compilação do Aderyn a partir do código-fonte e frequentemente falhava por problemas de rede/SSL. Era necessário alinhar o build ao stack Python e garantir que todas as ferramentas (Slither, Mythril e Aderyn) estivessem presentes no container final.
 
 ## Correções Implementadas
 
-### ✅ 1. Correção do Dockerfile (Linha 3)
-**Alteração**: `as` → `AS`
-```dockerfile
-# Antes
-FROM rust:1.75-slim as rust-builder
+### ✅ 1. Base da Imagem Atualizada
 
-# Depois
-FROM rust:1.75-slim AS rust-builder
-```
-**Resultado**: Dockerfile validado sem avisos!
+- A imagem base agora é `python:3.12-slim`, compatível com o servidor MCP escrito em Python.
+- Dependências de sistema mínimas (build-essential, curl, libssl-dev, pkg-config) são instaladas apenas uma vez.
 
-### ✅ 2. Melhorias no docker-compose.yml
-- Adicionado `network: host` para melhor conectividade
-- Adicionado cache BuildKit para builds mais rápidas
+### ✅ 2. Ferramentas de Auditoria Empacotadas
 
-### ✅ 3. Novos Arquivos Criados
+- Slither (`slither-analyzer==0.10.0`) e Mythril (`mythril==0.24.8`) instalados via `pip` com flags de confiabilidade.
+- Aderyn provisionado via [Cyfrinup](https://github.com/Cyfrin/up), baixando o binário oficial durante o build e validando com `aderyn --version`.
+- Todas as ferramentas ficam disponíveis em `/opt/cyfrin/bin`, acessíveis para o usuário não-root `mcp`.
 
-#### `.env.example` - Template de configuração
-Configure proxy, mirrors de registry, timeouts, etc.
+### ✅ 3. Otimizações de Build
 
-#### `Makefile` - Automação de builds
-```bash
-make help           # Ver todos os comandos
-make build-retry    # Build com retry automático (RECOMENDADO)
-make verify         # Verificar instalações
-```
+- Shell padrão `/bin/bash -o pipefail` garante falhas imediatas em pipelines de instalação.
+- Cache do `apt` removido ao final para reduzir o tamanho da imagem.
+- Verificação final executa `slither --version`, `myth --version` e `aderyn --version` para garantir que tudo foi instalado corretamente.
 
-#### `DOCKER_NETWORK_TIMEOUT.md` - Guia rápido
-6 soluções rápidas para problemas de timeout de rede.
+### ✅ 4. Documentação Atualizada
 
-### ✅ 4. Documentação Expandida
-- Seção completa de troubleshooting no DOCKER.md
-- Exemplos para CI/CD (GitHub Actions)
-- Configurações para redes corporativas
-- Soluções para regiões com restrições
+- `README.md`, `DOCKER.md`, `QUICKSTART.md` e demais guias agora afirmam explicitamente que Aderyn está incluído.
+- Instruções para instalação manual utilizam Cyfrinup (sem `cargo install`).
+- Guias em português (`ALTERACOES.md`, `CORRECOES_DOCKER_PT.md`) alinhados com a nova arquitetura.
 
-## Como Usar as Correções
+## Como Executar o Build sem Erros de Rede
 
-### Solução Recomendada (Mais Fácil)
+### Solução Recomendada
+
 ```bash
 make build-retry
 ```
-Este comando baixa as imagens base primeiro, evitando timeouts.
 
-### Outras Opções
+O alvo pre-puxa `python:3.12-slim` e reconstrói a imagem automaticamente.
 
-**Para redes lentas:**
-```bash
-docker pull rust:1.75-slim
-docker pull node:20-slim
-docker-compose build
-```
+### Outras Estratégias
 
-**Por trás de proxy corporativo:**
-```bash
-export HTTP_PROXY=http://proxy.empresa.com:8080
-export HTTPS_PROXY=http://proxy.empresa.com:8080
-docker-compose build
-```
+- **Rede lenta:** `docker pull python:3.12-slim && docker compose build`
+- **Proxy corporativo:** exporte `HTTP_PROXY`/`HTTPS_PROXY` antes do build.
+- **CI/CD:** `DOCKER_BUILDKIT=1 docker build --network=host -t farofino-mcp:latest .`
+- **Timeout elevado:** `COMPOSE_HTTP_TIMEOUT=300 docker compose build`
 
-**Para CI/CD:**
-```bash
-DOCKER_BUILDKIT=1 docker build --network=host -t farofino-mcp:latest .
-```
-
-**Com aumento de timeout:**
-```bash
-COMPOSE_HTTP_TIMEOUT=300 docker-compose build
-```
+Veja `DOCKER_NETWORK_TIMEOUT.md` para dicas detalhadas.
 
 ## Verificação
 
-Todos os testes passaram:
-- ✅ Dockerfile sem avisos
-- ✅ docker-compose.yml validado
-- ✅ Makefile funcionando
-- ✅ Documentação completa
+Após o build, execute:
 
-## Arquivos Alterados
+```bash
+make verify
+```
 
-| Arquivo | Status | Descrição |
-|---------|--------|-----------|
-| Dockerfile | Modificado | Corrigido problema de maiúsculas |
-| docker-compose.yml | Modificado | Configurações de rede adicionadas |
-| DOCKER.md | Modificado | Troubleshooting expandido |
-| .env.example | Novo | Template de configuração |
-| Makefile | Novo | Automação de builds |
-| DOCKER_NETWORK_TIMEOUT.md | Novo | Guia rápido de soluções |
-| README.md | Modificado | Link para troubleshooting |
-
-## Conclusão
-
-✅ **Todos os erros reportados foram corrigidos!**
-
-O aviso de maiúsculas foi eliminado e 6 soluções diferentes foram implementadas para lidar com timeouts de rede, incluindo:
-- Retry automático com Makefile
-- Configurações para proxy
-- Soluções para CI/CD
-- Aumento de timeout
-- Uso de mirrors alternativos
-
-**Nota**: O timeout de rede é um problema de infraestrutura que não pode ser completamente eliminado, mas agora você tem múltiplas soluções robustas para contorná-lo.
+Esse comando inicia o servidor MCP rapidamente e valida a presença de Slither, Mythril e Aderyn.
 
 ## Começar Agora
 
 ```bash
 cd farofino-mcp
-make build-retry  # Build com retry automático
-make verify       # Verificar instalações
-make run          # Executar o servidor
+make build-retry
+make verify
+make run
 ```
 
-Para mais detalhes, consulte:
-- `DOCKER_NETWORK_TIMEOUT.md` - Guia rápido
-- `DOCKER.md` - Documentação completa
-- `make help` - Ver todos os comandos disponíveis
+## Referências
+
+- `DOCKER.md` – Guia completo de uso
+- `ALTERACOES.md` – Resumo das mudanças em português
+- `DOCKER_NETWORK_TIMEOUT.md` – Soluções para problemas de rede
+- `make help` – Lista de alvos disponíveis

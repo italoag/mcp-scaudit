@@ -12,16 +12,17 @@ This document explains the Docker setup for the MCP Smart Contract Auditor proje
 
 2. **Docker Compose Syntax**: Updated all `docker-compose` commands to `docker compose` (Docker Compose v2 syntax) which is the current standard.
 
-3. **Aderyn Support**: Added Rust/Cargo installation to the Dockerfile to enable Aderyn (Rust-based Solidity auditor) to be installed alongside the Python-based tools (Slither and Mythril).
+3. **Aderyn Support**: Integrated the Cyfrinup installer into the Dockerfile so Aderyn (Rust-based Solidity auditor) ships with the image alongside Slither and Mythril.
 
 ### Dockerfile Structure
 
 The Dockerfile now:
+
 - Uses `python:3.12-slim` as the base image (appropriate for Python project)
-- Installs Rust/Cargo toolchain for Aderyn compilation
+- Installs build essentials required by Python tooling
 - Installs Slither and Mythril (Python-based audit tools) - **always available**
-- Attempts to install Aderyn (Rust-based audit tool) - **may be optional depending on build environment**
-- Gracefully handles SSL certificate issues that may prevent Aderyn installation in restricted environments
+- Installs Aderyn (Rust-based audit tool) via Cyfrinup and validates the binary - **always available**
+- Gracefully handles SSL certificate issues that may affect downloads by forcing modern TLS settings
 
 ## Build Instructions
 
@@ -79,51 +80,24 @@ make build-host-network
 
 ## Included Tools
 
-### Always Available (Python-based)
+### Always Available Tools
 
 1. **Slither** (`slither-analyzer==0.10.0`)
    - Static analysis framework for Solidity & Vyper
-   - Always installed successfully
+   - Installed via pip with trusted-host flags for reliability
 
 2. **Mythril** (`mythril==0.24.8`)
    - Symbolic execution analysis for Ethereum smart contracts
-   - Always installed successfully
+   - Installed via pip with trusted-host flags for reliability
 
-### Optionally Available (Rust-based)
-
-3. **Aderyn**
+3. **Aderyn** (latest release via [Cyfrinup](https://github.com/Cyfrin/up))
    - Rust-based static analyzer for Solidity
-   - Installed via `cargo install aderyn`
-   - May not be available if SSL certificate issues occur during build
-   - Can be installed manually later if needed
+   - Downloaded as a prebuilt binary through Cyfrinup during the Docker build
+   - Version is validated via `aderyn --version` in the build pipeline
 
-## Handling Aderyn Installation Issues
+## Cyfrinup Considerations
 
-### During Build
-
-If you see a warning during build:
-```
-WARNING: Aderyn installation failed. You can install it manually later with 'cargo install aderyn'
-```
-
-This is expected in environments with SSL certificate restrictions (common in CI/CD systems). The Docker image will still be functional with Slither and Mythril.
-
-### Manual Aderyn Installation
-
-If Aderyn is not available in your built image, you can install it manually:
-
-```bash
-# Enter the container as root
-docker run --rm -it --entrypoint /bin/bash --user root farofino-mcp:latest
-
-# Inside the container, install Aderyn
-cargo install aderyn
-
-# Exit and commit the changes (optional)
-exit
-```
-
-Alternatively, build in an environment with proper SSL certificates or configure cargo to use a different crate mirror.
+Cyfrinup downloads prebuilt binaries directly from the Cyfrin release repositories. Ensure that outbound HTTPS traffic to `githubusercontent.com` is allowed during the Docker build. If your environment performs SSL interception, add the appropriate CA certificates to the base image or execute the build behind a trusted proxy. Should the download fail, rerun `make build` after restoring connectivity; the build will stop with an explicit error when Aderyn cannot be provisioned.
 
 ## Verification
 
@@ -134,7 +108,8 @@ make verify
 ```
 
 Expected output:
-```
+
+```log
 Testing MCP server startup...
 MCP Smart Contract Auditor Server running on stdio
 
@@ -142,10 +117,8 @@ Testing tool availability...
 Slither: OK
 Mythril: OK
 
-Testing Aderyn (may not be available if cargo install failed)...
+Testing Aderyn...
 Aderyn: OK
-# OR
-Aderyn: Not available (expected if cargo install failed due to SSL issues)
 ```
 
 You can also use the MCP server's `check_tools` command to see which tools are available at runtime.
@@ -164,26 +137,30 @@ If you experience network timeouts during build:
 ### SSL Certificate Issues
 
 SSL certificate issues typically occur in:
+
 - Corporate networks with SSL inspection
 - CI/CD environments with self-signed certificates
 - Restricted build environments
 
 Solutions:
-- Build in a different environment with proper certificates
-- Install Aderyn manually after the build (see above)
-- Use Slither and Mythril only (both are fully functional)
+
+- Build in an environment with trusted certificates or with TLS inspection support configured
+- Inject the required certificate authorities into the base image so curl/Cyfrinup trusts your corporate proxy
+- Re-run `make build` after connectivity is restored so Cyfrinup can download the Aderyn binary
 
 ### Image Size
 
 The final image includes:
+
 - Python 3.12 runtime
-- Rust/Cargo toolchain (for Aderyn)
-- Slither, Mythril, and optionally Aderyn
+- Cyfrinup-managed security tooling (Aderyn binary)
+- Slither, Mythril, and Aderyn
 - MCP server code
 
-Expected size: ~1.5-2GB (depending on whether Aderyn is included)
+Expected size: ~1.5-2GB
 
 To check your image size:
+
 ```bash
 make size
 ```

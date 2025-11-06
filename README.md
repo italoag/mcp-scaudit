@@ -1,6 +1,6 @@
 # Faro Fino - Smart Contract Audit MCP Server
 
-A Model Context Protocol (MCP) server for auditing smart contracts using industry-standard tools like Slither, Mythril, Aderyn  and custom pattern analysis.
+A Model Context Protocol (MCP) server for auditing smart contracts using industry-standard tools like Slither, Mythril, Aderyn, and custom pattern analysis.
 
 ## Overview
 
@@ -32,16 +32,17 @@ docker-compose run --rm farofino-mcp
 ```
 
 **If you encounter network timeout errors during build**, see [DOCKER_NETWORK_TIMEOUT.md](DOCKER_NETWORK_TIMEOUT.md) for quick fixes or use:
+
 ```bash
 make build-retry  # Automatically handles network issues
 ```
 
 **Advantages:**
-- ✅ Slither and Mythril pre-installed
+
+- ✅ Aderyn, Slither, and Mythril pre-installed
 - ✅ Consistent environment across all platforms
 - ✅ No dependency conflicts
 - ✅ Optimized slim image (~1.3-1.4GB)
-- ⚠️ Aderyn not pre-installed (can be added manually if needed)
 
 See [DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
 
@@ -72,16 +73,20 @@ pip install -e .
 The server works with various external audit tools. Install the ones you need:
 
 **Slither:**
+
 ```bash
 pip install slither-analyzer
 ```
 
-**Aderyn:**
+**Aderyn:** (via [Cyfrinup](https://github.com/Cyfrin/up))
+
 ```bash
-cargo install aderyn
+curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash
+CYFRINUP_ONLY_INSTALL=aderyn cyfrinup
 ```
 
 **Mythril:**
+
 ```bash
 pip install mythril
 ```
@@ -111,6 +116,7 @@ python3 -m farofino_mcp
 ```
 
 Or if installed as a package:
+
 ```bash
 farofino-mcp
 ```
@@ -122,11 +128,13 @@ farofino-mcp
 Run Slither static analysis on a smart contract.
 
 **Parameters:**
+
 - `contract_path` (required): Path to the contract file (.sol or .vy)
 - `detectors` (optional): Comma-separated list of specific detectors to run
 - `exclude_detectors` (optional): Comma-separated list of detectors to exclude
 
-**Example:**
+**Example:** (replace `/path/to/MyContract.sol` with your actual file path)
+
 ```json
 {
   "contract_path": "/path/to/MyContract.sol",
@@ -139,9 +147,11 @@ Run Slither static analysis on a smart contract.
 Run Aderyn static analysis on a smart contract.
 
 **Parameters:**
+
 - `contract_path` (required): Path to the contract file or project root
 
-**Example:**
+**Example:** (replace `/path/to/MyContract.sol` with your actual file path)
+
 ```json
 {
   "contract_path": "/path/to/MyContract.sol"
@@ -153,10 +163,12 @@ Run Aderyn static analysis on a smart contract.
 Run Mythril symbolic execution analysis.
 
 **Parameters:**
+
 - `contract_path` (required): Path to the contract file (.sol)
 - `execution_timeout` (optional): Maximum execution time in seconds
 
-**Example:**
+**Example:** (replace `/path/to/MyContract.sol` with your actual file path)
+
 ```json
 {
   "contract_path": "/path/to/MyContract.sol",
@@ -169,9 +181,11 @@ Run Mythril symbolic execution analysis.
 Perform basic pattern-based security analysis.
 
 **Parameters:**
+
 - `contract_path` (required): Path to the contract file
 
-**Example:**
+**Example:** (replace `/path/to/MyContract.sol` with your actual file path)
+
 ```json
 {
   "contract_path": "/path/to/MyContract.sol"
@@ -179,6 +193,7 @@ Perform basic pattern-based security analysis.
 ```
 
 Checks for:
+
 - `selfdestruct` usage
 - `delegatecall` usage
 - `tx.origin` authentication
@@ -191,9 +206,11 @@ Checks for:
 Read and return the source code of a smart contract.
 
 **Parameters:**
+
 - `contract_path` (required): Path to the contract file
 
-**Example:**
+**Example:** (replace `/path/to/MyContract.sol` with your actual file path)
+
 ```json
 {
   "contract_path": "/path/to/MyContract.sol"
@@ -207,6 +224,7 @@ Check which audit tools are installed and available.
 **Parameters:** None
 
 **Example:**
+
 ```json
 {}
 ```
@@ -228,7 +246,7 @@ Add this to your Claude Desktop configuration file:
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "farofino-mcp:latest"],
       "cwd": "/path/to/farofino-mcp"
@@ -237,14 +255,16 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
-**Note:** On Windows, replace `${PWD}` with `%CD%`
+**Notes:**
+- Replace `/path/to/farofino-mcp` with the absolute path to this repository on your host machine so Docker sees the right directory.
+- On Windows, replace `${PWD}` with `%CD%`.
 
 ### Option 2: Using Docker Compose
 
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker-compose",
       "args": ["run", "--rm", "farofino-mcp"],
       "cwd": "/path/to/farofino-mcp"
@@ -253,12 +273,14 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
+**Tip:** Replace `/path/to/farofino-mcp` with the absolute host path so `docker-compose` finds the repo configuration.
+
 ### Option 3: Using Python Module (No Docker)
 
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "python3",
       "args": ["-m", "farofino_mcp"],
       "cwd": "/path/to/farofino-mcp"
@@ -267,12 +289,14 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
+**Tip:** Replace the `cwd` placeholder with the absolute directory where you installed `farofino-mcp`.
+
 ### Option 4: Using pip Installation (No Docker)
 
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "farofino-mcp"
     }
   }
@@ -283,28 +307,34 @@ For more Docker configuration options, see [DOCKER.md](DOCKER.md).
 
 ## Example Workflow
 
+Replace `/path/to/contract.sol` with the actual location of your Solidity file in the steps below.
+
 1. **Check available tools:**
+
    ```
    Use check_tools to see which audit tools are installed
    ```
 
 2. **Read the contract:**
+
    ```
    Use read_contract with contract_path="/path/to/contract.sol"
    ```
 
 3. **Run pattern analysis (always available):**
+
    ```
    Use pattern_analysis with contract_path="/path/to/contract.sol"
    ```
 
 4. **Run Slither analysis (if installed):**
+
    ```
    Use slither_audit with contract_path="/path/to/contract.sol"
    ```
 
 5. **Run additional tools as needed:**
-   - Aderyn for Rust-based analysis
+  - Aderyn for Rust-based analysis (pre-installed in the Docker image or via Cyfrinup)
    - Mythril for symbolic execution
 
 ## Development
@@ -347,6 +377,7 @@ farofino-mcp/
 ### Tool not found errors
 
 If you get errors about tools not being found:
+
 1. Run the `check_tools` command to see which tools are installed
 2. Install missing tools following the installation instructions above
 3. Ensure the tools are in your system PATH
@@ -354,12 +385,14 @@ If you get errors about tools not being found:
 ### Permission errors
 
 If you get permission errors when running audit tools:
+
 - Ensure the contract files are readable
 - Check that audit tools have proper execution permissions
 
 ### Large contracts timing out
 
 For large contracts or complex analysis:
+
 - Use the `execution_timeout` parameter with Mythril
 - Use `exclude_detectors` with Slither to skip certain checks
 - Run pattern analysis first for a quick overview
@@ -375,6 +408,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 ## Security
 
 This tool is for educational and professional security auditing purposes. Always:
+
 - Verify audit results manually
 - Use multiple tools for comprehensive analysis
 - Follow secure development best practices

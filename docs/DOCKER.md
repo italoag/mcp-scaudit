@@ -8,8 +8,8 @@ The Docker container provides:
 
 - ✅ **Slither** (v0.10.0) - Python-based static analyzer
 - ✅ **Mythril** (v0.24.8) - Symbolic execution analyzer
-- ⚠️ **Aderyn** (optional) - Not pre-installed due to build environment SSL issues, can be added manually
-- ✅ **Node.js 20** - Runtime environment
+- ✅ **Aderyn** (latest via Cyfrinup) - Rust-based static analyzer
+- ✅ **Python 3.12 runtime** - Base environment
 - ✅ **MCP Server** - Pre-built and ready to use
 
 **Note**: The build process includes workarounds for SSL certificate issues in certain environments. If you encounter SSL errors, the build should handle them automatically using --trusted-host flags and SSL verification bypasses.
@@ -102,7 +102,7 @@ Add to your Claude Desktop configuration:
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "farofino-mcp:latest"]
     }
@@ -110,12 +110,14 @@ Add to your Claude Desktop configuration:
 }
 ```
 
+Replace `${PWD}` with the absolute path to your repository if Claude Desktop does not expand it automatically.
+
 **Windows:**
 
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "-v", "%CD%/contracts:/contracts:ro", "farofino-mcp:latest"]
     }
@@ -128,7 +130,7 @@ Add to your Claude Desktop configuration:
 ```json
 {
   "mcpServers": {
-    "scaudit": {
+    "farofino": {
       "command": "docker-compose",
       "args": ["run", "--rm", "farofino-mcp"],
       "cwd": "/path/to/farofino-mcp"
@@ -136,6 +138,8 @@ Add to your Claude Desktop configuration:
   }
 }
 ```
+
+Make sure `/path/to/farofino-mcp` is the actual host path where this repository lives so `docker-compose` can find `docker-compose.yml`.
 
 ## Volume Mounts
 
@@ -147,6 +151,8 @@ Mount your contracts for analysis:
 docker run -i -v /path/to/contracts:/contracts:ro farofino-mcp:latest
 ```
 
+Swap `/path/to/contracts` for the real directory on your host that contains the Solidity files you want to audit.
+
 Then in your MCP calls, use `/contracts/YourContract.sol` as the path.
 
 ### Configuration Directory (Optional)
@@ -154,6 +160,8 @@ Then in your MCP calls, use `/contracts/YourContract.sol` as the path.
 ```bash
 docker run -i -v /path/to/config:/config:ro farofino-mcp:latest
 ```
+
+Replace `/path/to/config` with the full host path to your configuration files.
 
 ## Building the Image
 
@@ -188,7 +196,7 @@ docker buildx build \
 ### Check that the MCP server starts
 
 ```bash
-docker run --rm farofino-mcp:latest sh -c "timeout 2 node dist/index.js" 2>&1 | head -5
+docker run --rm farofino-mcp:latest sh -c "timeout 2 python3 -m farofino_mcp" 2>&1 | head -5
 ```
 
 You should see: `MCP Smart Contract Auditor Server running on stdio`
@@ -205,7 +213,11 @@ docker run --rm --entrypoint python3 farofino-mcp:latest -c "import slither; pri
 docker run --rm --entrypoint sh farofino-mcp:latest -c "myth --version 2>&1 | head -1"
 ```
 
-**Note**: Aderyn is not pre-installed in the Docker image due to SSL certificate issues during build. If needed, you can install it separately.
+### Test Aderyn availability
+
+```bash
+docker run --rm --entrypoint sh farofino-mcp:latest -c "aderyn --version"
+```
 
 ## Development Mode
 
@@ -221,13 +233,13 @@ This mounts your source code and watches for changes.
 
 The container is optimized for size:
 
-- Single-stage build (Rust builder removed due to SSL issues)
-- Slim base images (node:20-slim)
+- Single-stage build with Cyfrinup-managed tooling
+- Slim base image (python:3.12-slim)
 - Separate installation of Python packages to speed up builds
 - Build artifacts cached efficiently
 - Cleaned package manager caches
 
-Expected image size: ~1.3-1.4GB (including Slither, Mythril, and Node.js runtime)
+Expected image size: ~1.3-1.4GB (including Slither, Mythril, Aderyn, and Python runtime)
 
 ## Troubleshooting
 
@@ -288,8 +300,7 @@ If you encounter timeout errors like `failed to resolve source metadata` or `dia
 DOCKER_BUILDKIT=1 docker build --network=host -t farofino-mcp:latest .
 
 # Solution 3: Pull base images first (manual retry)
-docker pull rust:1.75-slim
-docker pull node:20-slim
+docker pull python:3.12-slim
 docker-compose build
 
 # Solution 4: Use docker-compose with increased timeout
