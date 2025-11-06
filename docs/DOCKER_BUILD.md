@@ -12,7 +12,7 @@ This document explains the Docker setup for the MCP Smart Contract Auditor proje
 
 2. **Docker Compose Syntax**: Updated all `docker-compose` commands to `docker compose` (Docker Compose v2 syntax) which is the current standard.
 
-3. **Aderyn Support**: Integrated the Cyfrinup installer into the Dockerfile so Aderyn (Rust-based Solidity auditor) ships with the image alongside Slither and Mythril.
+3. **Aderyn Support**: Integrated the Cyfrinup installer into the Dockerfile so Aderyn (Rust-based Solidity auditor) ships with the image alongside Slither.
 
 ### Dockerfile Structure
 
@@ -20,7 +20,7 @@ The Dockerfile now:
 
 - Uses `python:3.12-slim` as the base image (appropriate for Python project)
 - Installs build essentials required by Python tooling
-- Installs Slither and Mythril (Python-based audit tools) - **always available**
+- Installs Slither (Python-based audit tool) - **always available**
 - Installs Aderyn (Rust-based audit tool) via Cyfrinup and validates the binary - **always available**
 - Gracefully handles SSL certificate issues that may affect downloads by forcing modern TLS settings
 
@@ -82,15 +82,11 @@ make build-host-network
 
 ### Always Available Tools
 
-1. **Slither** (`slither-analyzer==0.10.0`)
+1. **Slither** (`slither-analyzer`)
    - Static analysis framework for Solidity & Vyper
    - Installed via pip with trusted-host flags for reliability
 
-2. **Mythril** (`mythril==0.24.8`)
-   - Symbolic execution analysis for Ethereum smart contracts
-   - Installed via pip with trusted-host flags for reliability
-
-3. **Aderyn** (latest release via [Cyfrinup](https://github.com/Cyfrin/up))
+2. **Aderyn** (latest release via [Cyfrinup](https://github.com/Cyfrin/up))
    - Rust-based static analyzer for Solidity
    - Downloaded as a prebuilt binary through Cyfrinup during the Docker build
    - Version is validated via `aderyn --version` in the build pipeline
@@ -115,7 +111,6 @@ MCP Smart Contract Auditor Server running on stdio
 
 Testing tool availability...
 Slither: OK
-Mythril: OK
 
 Testing Aderyn...
 Aderyn: OK
@@ -154,7 +149,7 @@ The final image includes:
 
 - Python 3.12 runtime
 - Cyfrinup-managed security tooling (Aderyn binary)
-- Slither, Mythril, and Aderyn
+- Slither and Aderyn
 - MCP server code
 
 Expected size: ~1.5-2GB
@@ -187,5 +182,4 @@ make clean
 
 - [MCP Protocol Documentation](https://github.com/anthropics/mcp)
 - [Slither Documentation](https://github.com/crytic/slither)
-- [Mythril Documentation](https://github.com/ConsenSys/mythril)
 - [Aderyn Documentation](https://github.com/Cyfrin/aderyn)

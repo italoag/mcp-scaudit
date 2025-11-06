@@ -2,7 +2,7 @@
 
 ## Problema Relatado
 
-O Dockerfile antigo utilizava múltiplas fases com imagens base de Rust e Node.js, exigia compilação do Aderyn a partir do código-fonte e frequentemente falhava por problemas de rede/SSL. Era necessário alinhar o build ao stack Python e garantir que todas as ferramentas (Slither, Mythril e Aderyn) estivessem presentes no container final.
+O Dockerfile antigo utilizava múltiplas fases com imagens base de Rust e Node.js, exigia compilação do Aderyn a partir do código-fonte e frequentemente falhava por problemas de rede/SSL. Era necessário alinhar o build ao stack Python e garantir que as ferramentas (Slither e Aderyn) estivessem presentes no container final.
 
 ## Correções Implementadas
 
@@ -13,7 +13,7 @@ O Dockerfile antigo utilizava múltiplas fases com imagens base de Rust e Node.j
 
 ### ✅ 2. Ferramentas de Auditoria Empacotadas
 
-- Slither (`slither-analyzer==0.10.0`) e Mythril (`mythril==0.24.8`) instalados via `pip` com flags de confiabilidade.
+- Slither (`slither-analyzer`) instalado via `pipx` com flags de confiabilidade.
 - Aderyn provisionado via [Cyfrinup](https://github.com/Cyfrin/up), baixando o binário oficial durante o build e validando com `aderyn --version`.
 - Todas as ferramentas ficam disponíveis em `/opt/cyfrin/bin`, acessíveis para o usuário não-root `mcp`.
 
@@ -21,7 +21,7 @@ O Dockerfile antigo utilizava múltiplas fases com imagens base de Rust e Node.j
 
 - Shell padrão `/bin/bash -o pipefail` garante falhas imediatas em pipelines de instalação.
 - Cache do `apt` removido ao final para reduzir o tamanho da imagem.
-- Verificação final executa `slither --version`, `myth --version` e `aderyn --version` para garantir que tudo foi instalado corretamente.
+- Verificação final executa `slither --version` e `aderyn --version` para garantir que tudo foi instalado corretamente.
 
 ### ✅ 4. Documentação Atualizada
 
@@ -56,7 +56,7 @@ Após o build, execute:
 make verify
 ```
 
-Esse comando inicia o servidor MCP rapidamente e valida a presença de Slither, Mythril e Aderyn.
+Esse comando inicia o servidor MCP rapidamente e valida a presença de Slither e Aderyn.
 
 ## Começar Agora
 

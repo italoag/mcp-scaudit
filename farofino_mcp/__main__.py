@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 MCP Smart Contract Auditor Server - Python Implementation
-A Model Context Protocol (MCP) server for auditing smart contracts using Slither, Mythril, and other tools.
+A Model Context Protocol (MCP) server for auditing smart contracts using Slither, Aderyn, and other tools.
 """
 
 import asyncio
@@ -22,14 +22,12 @@ from mcp.types import Tool, TextContent
 TOOL_INSTALL_INSTRUCTIONS: Dict[str, str] = {
     "slither": "pip install slither-analyzer",
     "aderyn": "curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash && CYFRINUP_ONLY_INSTALL=aderyn cyfrinup",
-    "mythril": "pip install mythril",
 }
 
 
 TOOL_VERSION_COMMANDS: Dict[str, List[List[str]]] = {
     "slither": [["slither", "--version"]],
     "aderyn": [["aderyn", "--version"]],
-    "mythril": [["myth", "--version"], ["myth", "version"]],
 }
 
 
@@ -168,63 +166,6 @@ async def run_aderyn(contract_path: Optional[str]) -> AuditResult:
         )
 
 
-async def run_mythril(contract_path: Optional[str], 
-                      execution_timeout: Optional[int] = None) -> AuditResult:
-    """Run Mythril analysis on a smart contract"""
-    try:
-        if not file_exists(contract_path):
-            return AuditResult(
-                success=False,
-                error=f"Contract file not found: {contract_path}"
-            )
-        
-        if not command_exists("myth"):
-            return AuditResult(
-                success=False,
-                error="Mythril is not installed. Please install it with: pip install mythril"
-            )
-        
-        args = ["myth", "analyze", contract_path, "-o", "json"]
-        if execution_timeout:
-            args.extend(["--execution-timeout", str(execution_timeout)])
-        
-        result = subprocess.run(
-            args,
-            capture_output=True,
-            text=True,
-            timeout=600
-        )
-
-        if result.returncode != 0:
-            error_output = result.stderr.strip() or result.stdout.strip()
-            message = error_output or f"Mythril exited with code {result.returncode}"
-            return AuditResult(success=False, error=f"Mythril analysis failed: {message}")
-        
-        findings = []
-        try:
-            json_output = json.loads(result.stdout)
-            findings = json_output.get("issues", [])
-        except json.JSONDecodeError:
-            # If JSON parsing fails, return raw output
-            pass
-        
-        return AuditResult(
-            success=True,
-            output=result.stdout,
-            findings=findings
-        )
-    except subprocess.TimeoutExpired:
-        return AuditResult(
-            success=False,
-            error="Mythril analysis timed out"
-        )
-    except Exception as e:
-        return AuditResult(
-            success=False,
-            error=f"Mythril analysis failed: {str(e)}"
-        )
-
-
 async def analyze_contract_patterns(contract_path: Optional[str]) -> AuditResult:
     """Read and analyze a contract file for basic patterns"""
     try:
@@ -358,7 +299,6 @@ async def check_tools() -> AuditResult:
     for tool, binary in {
         "slither": "slither",
         "aderyn": "aderyn",
-        "mythril": "myth",
     }.items():
         installed = command_exists(binary)
         version = None
@@ -435,27 +375,6 @@ def get_tool_definitions() -> List[Tool]:
             },
         ),
         Tool(
-            name="mythril_audit",
-            description=(
-                "Run Mythril symbolic execution analysis on a smart contract. Mythril uses "
-                "symbolic execution to detect security vulnerabilities in Ethereum smart contracts."
-            ),
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "contract_path": {
-                        "type": "string",
-                        "description": "Path to the smart contract file (.sol)",
-                    },
-                    "execution_timeout": {
-                        "type": "number",
-                        "description": "Optional: Maximum execution time in seconds (default: 300)",
-                    },
-                },
-                "required": ["contract_path"],
-            },
-        ),
-        Tool(
             name="pattern_analysis",
             description=(
                 "Perform basic pattern-based security analysis on a smart contract. Checks for "
@@ -516,11 +435,6 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> AuditResult:
     if name == "aderyn_audit":
         contract_path = arguments.get("contract_path")
         return await run_aderyn(contract_path)
-
-    if name == "mythril_audit":
-        contract_path = arguments.get("contract_path")
-        execution_timeout = arguments.get("execution_timeout")
-        return await run_mythril(contract_path, execution_timeout)
 
     if name == "pattern_analysis":
         contract_path = arguments.get("contract_path")

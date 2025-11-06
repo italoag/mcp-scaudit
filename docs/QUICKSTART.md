@@ -31,7 +31,7 @@ Configure Claude Desktop:
 
 Swap `/path/to/farofino-mcp` for the absolute path to the repository on your machine so `docker-compose` can find the project files.
 
-**Benefits:** ✅ Slither, Aderyn, and Mythril pre-installed | ✅ No dependency issues | ✅ Works everywhere
+**Benefits:** ✅ Slither and Aderyn pre-installed | ✅ No dependency issues | ✅ Works everywhere
 
 See [DOCKER.md](DOCKER.md) for detailed Docker setup.
 
@@ -50,7 +50,7 @@ No installation needed! Just configure Claude Desktop:
 }
 ```
 
-**Note:** External tools (Slither, Aderyn, Mythril) must be installed separately.
+**Note:** External tools (Slither, Aderyn) must be installed separately.
 
 ### Option 3: Global Installation
 
@@ -79,7 +79,7 @@ Ask Claude:
 
 This will run the `check_tools` function and show which tools are installed.
 
-**With Docker:** Slither, Aderyn, and Mythril will be available ✅  
+**With Docker:** Slither and Aderyn will be available ✅  
 **Without Docker:** Only pattern_analysis available unless you install tools separately
 
 ### 2. Run Pattern Analysis (No Additional Tools Needed)
@@ -106,12 +106,6 @@ pip install slither-analyzer
 ```bash
 curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash
 CYFRINUP_ONLY_INSTALL=aderyn cyfrinup
-```
-
-**Mythril** (Symbolic execution):
-
-```bash
-pip install mythril
 ```
 
 ## Example Usage
@@ -142,8 +136,7 @@ Claude will:
 3. Run pattern analysis
 4. Run Slither (if installed)
 5. Run Aderyn (if installed)
-6. Run Mythril (if installed)
-7. Summarize findings
+6. Summarize findings
 
 ### Quick Pattern Check
 >
@@ -172,7 +165,7 @@ The built-in pattern analysis (no external tools needed) checks for:
 
 1. **Start with pattern_analysis** - it requires no additional tools
 2. **Install Slither first** - it's the most comprehensive and widely used
-3. **Use multiple tools** - different tools catch different issues
+3. **Use multiple tools** - different tools catch different issues (pattern analysis, Slither, Aderyn)
 4. **Review findings manually** - automated tools may have false positives
 5. **Keep tools updated** - `pip install --upgrade slither-analyzer`
 

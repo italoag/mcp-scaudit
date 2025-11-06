@@ -1,11 +1,11 @@
 # Multi-stage build for MCP Smart Contract Auditor container
-# This Dockerfile includes Slither and Mythril (Python-based tools)
-# Aderyn (Rust-based) can be added via a separate build stage (see below)
+# This Dockerfile includes Slither (Python-based tool)
+# Aderyn (Rust-based) is installed via Cyfrinup in this image
 
 FROM python:3.12-slim
 
 LABEL maintainer="farofino-mcp"
-LABEL description="MCP Smart Contract Auditor with Slither, Mythril, and Aderyn pre-installed via Cyfrinup."
+LABEL description="MCP Smart Contract Auditor with Slither and Aderyn pre-installed via Cyfrinup."
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -56,14 +56,11 @@ RUN pip3 install --no-cache-dir \
     pipx \
     && rm -rf ~/.cache/pip
 
-# Install Slither and Mythril in isolated environments via pipx to avoid dependency conflicts
+# Install Slither in an isolated environment via pipx to avoid dependency conflicts
 RUN pipx install --pip-args="--no-cache-dir --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org" slither-analyzer && \
-    pipx install --pip-args="--no-cache-dir --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org" mythril && \
-    ln -sf ${PIPX_BIN_DIR}/slither /usr/local/bin/slither && \
-    ln -sf ${PIPX_BIN_DIR}/myth /usr/local/bin/myth
+    ln -sf ${PIPX_BIN_DIR}/slither /usr/local/bin/slither
 
-# Note: Dependency conflicts between Slither and Mythril are expected
-# Both tools will work at runtime despite version warnings
+
 
 # Copy source code
 COPY farofino_mcp ./farofino_mcp
@@ -86,7 +83,7 @@ RUN curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash &
     aderyn --version >/dev/null
 
 # Verify critical tooling is available
-RUN slither --version && myth --version && aderyn --version
+RUN slither --version && aderyn --version
 
 # Create a non-root user (or use existing user if UID 1000 exists)
 RUN id -u 1000 >/dev/null 2>&1 || useradd -m -u 1000 mcp && \
@@ -102,6 +99,6 @@ ENV PATH="/opt/cyfrin/bin:/root/.cargo/bin:/usr/local/bin:/home/mcp/.local/bin:$
 # Expose stdio for MCP communication
 ENTRYPOINT ["python3", "-m", "farofino_mcp"]
 
-# Note: Slither and Mythril are always available
-# Aderyn may not be available if cargo install failed due to SSL issues
+# Note: Slither is always available
+# Aderyn may not be available if Cyfrinup installation fails
 # Check available tools with the check_tools command

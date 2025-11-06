@@ -49,25 +49,6 @@ async def test_run_aderyn_requires_binary(monkeypatch, tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_run_mythril_success(monkeypatch, tmp_path):
-    contract = tmp_path / "Test.sol"
-    contract.write_text("pragma solidity ^0.8.0; contract Test {}")
-
-    monkeypatch.setattr(server, "command_exists", lambda name: name == "myth")
-
-    def fake_run(args, capture_output, text, timeout):
-        assert args[:2] == ["myth", "analyze"]
-        payload = {"issues": []}
-        return SimpleNamespace(returncode=0, stdout=json.dumps(payload), stderr="")
-
-    monkeypatch.setattr(server.subprocess, "run", fake_run)
-
-    result = await server.run_mythril(str(contract))
-    assert result.success
-    assert result.findings == []
-
-
-@pytest.mark.asyncio
 async def test_pattern_analysis_detects_warning(tmp_path):
     contract = tmp_path / "Risky.sol"
     contract.write_text(
@@ -91,7 +72,7 @@ async def test_read_contract_returns_source(tmp_path):
 
 @pytest.mark.asyncio
 async def test_check_tools_reports_availability(monkeypatch):
-    states = {"slither": True, "aderyn": False, "myth": True}
+    states = {"slither": True, "aderyn": False}
     monkeypatch.setattr(server, "command_exists", lambda name: states.get(name, False))
     monkeypatch.setattr(server, "_get_tool_version", lambda cmds: "1.2.3")
 
@@ -99,7 +80,7 @@ async def test_check_tools_reports_availability(monkeypatch):
     assert result.success
 
     payload = json.loads(result.output or "{}")
-    assert payload["available"] == ["slither", "mythril"]
+    assert payload["available"] == ["slither"]
     assert payload["missing"] == ["aderyn"]
     assert payload["toolDetails"]["slither"]["version"] == "1.2.3"
 
@@ -123,7 +104,6 @@ def test_tool_definitions_match_expected():
     assert tool_names == {
         "slither_audit",
         "aderyn_audit",
-        "mythril_audit",
         "pattern_analysis",
         "read_contract",
         "check_tools",

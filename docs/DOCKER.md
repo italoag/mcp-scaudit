@@ -1,13 +1,12 @@
 # Docker Setup for MCP Smart Contract Auditor
 
-This document explains how to use the MCP Smart Contract Auditor with Docker, providing a pre-configured environment with audit tools (Slither and Mythril) installed.
+This document explains how to use the MCP Smart Contract Auditor with Docker, providing a pre-configured environment with audit tools (Slither and Aderyn) installed.
 
 ## Overview
 
 The Docker container provides:
 
-- ✅ **Slither** (v0.10.0) - Python-based static analyzer
-- ✅ **Mythril** (v0.24.8) - Symbolic execution analyzer
+- ✅ **Slither** Python-based static analyzer
 - ✅ **Aderyn** (latest via Cyfrinup) - Rust-based static analyzer
 - ✅ **Python 3.12 runtime** - Base environment
 - ✅ **MCP Server** - Pre-built and ready to use
@@ -176,7 +175,6 @@ docker build -t farofino-mcp:latest .
 ```bash
 docker build \
   --build-arg SLITHER_VERSION=0.10.0 \
-  --build-arg MYTHRIL_VERSION=0.24.8 \
   -t farofino-mcp:custom .
 ```
 
@@ -191,7 +189,7 @@ docker buildx build \
 
 ## Verifying Installation
 
-**Note**: Due to dependency conflicts between Slither and Mythril, version checks may produce warnings. The tools will work correctly at runtime despite these warnings.
+**Note**: The build includes workarounds for SSL issues and may emit benign warnings from third-party dependencies.
 
 ### Check that the MCP server starts
 
@@ -205,12 +203,6 @@ You should see: `MCP Smart Contract Auditor Server running on stdio`
 
 ```bash
 docker run --rm --entrypoint python3 farofino-mcp:latest -c "import slither; print('Slither: OK')"
-```
-
-### Test Mythril availability
-
-```bash
-docker run --rm --entrypoint sh farofino-mcp:latest -c "myth --version 2>&1 | head -1"
 ```
 
 ### Test Aderyn availability
@@ -239,7 +231,7 @@ The container is optimized for size:
 - Build artifacts cached efficiently
 - Cleaned package manager caches
 
-Expected image size: ~1.3-1.4GB (including Slither, Mythril, Aderyn, and Python runtime)
+Expected image size: ~1.3-1.4GB (including Slither, Aderyn, and Python runtime)
 
 ## Troubleshooting
 
@@ -260,7 +252,7 @@ docker inspect farofino-mcp --format='{{.State.Health.Status}}'
 docker-compose build --no-cache
 
 # Verify tools in container
-docker run --rm farofino-mcp:latest sh -c "which slither && which aderyn && which myth"
+docker run --rm farofino-mcp:latest sh -c "which slither && which aderyn"
 ```
 
 ### Permission issues with mounted volumes
@@ -408,4 +400,4 @@ For issues related to:
 
 - **Docker setup**: Check this document and Docker logs
 - **MCP server**: See main [README.md](README.md)
-- **Audit tools**: Refer to tool-specific documentation (Slither, Aderyn, Mythril)
+- **Audit tools**: Refer to tool-specific documentation (Slither, Aderyn)

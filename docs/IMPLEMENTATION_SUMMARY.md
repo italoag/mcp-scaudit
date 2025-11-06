@@ -19,10 +19,9 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 **Key Features Implemented:**
 
 - ✅ Full MCP (Model Context Protocol) server implementation in Python
-- ✅ All 6 audit tools preserved and working:
+- ✅ Core MCP tools implemented:
   - `slither_audit` - Static analysis with Slither
   - `aderyn_audit` - Rust-based analysis with Aderyn
-  - `mythril_audit` - Symbolic execution with Mythril
   - `pattern_analysis` - Pattern-based security checks
   - `read_contract` - Read contract source code
   - `check_tools` - Check available audit tools
@@ -41,7 +40,7 @@ This document summarizes the complete rewrite of the MCP Smart Contract Auditor 
 
 - Base image: `node:20-slim` → `python:3.12-slim`
 - Entry point: `node dist/index.js` → `python3 -m farofino_mcp`
-- Python audit tools (Slither, Mythril) pre-installed
+- Python audit tools (Slither) pre-installed
 - SSL certificate trust flags added to handle network issues
 - Optimized layer caching for faster builds
 
@@ -161,12 +160,12 @@ Python 3.8+ Runtime
 **Python Dependencies:**
 
 - `mcp>=1.0.0` - MCP SDK for Python
-- `slither-analyzer` and `mythril` installed in the Docker image for audit tooling
+- `slither-analyzer` installed in the Docker image for audit tooling
 - Aderyn distributed via Cyfrinup (binary)
 
 **Why Python?**
 
-1. Native integration with security tools (Slither, Mythril are Python-based)
+1. Native integration with security tools (Slither is Python-based)
 2. Simpler dependency management
 3. Better ecosystem alignment
 4. Improved maintainability
@@ -302,7 +301,7 @@ Recommended next steps:
 1. **Module not found:** Ensure you run `python3 -m farofino_mcp` from project root
 2. **MCP SDK not found:** Run `pip install -r requirements.txt`
 3. **Docker build fails:** SSL certificate issues - already handled with trust flags
-4. **Audit tools not found:** Install separately: `pip install slither-analyzer mythril`
+4. **Audit tools not found:** Install separately: `pip install slither-analyzer`
 
 ## Conclusion
 

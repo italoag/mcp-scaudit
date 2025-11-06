@@ -41,14 +41,12 @@ verify: ## Verify all tools are installed correctly
 	docker run --rm farofino-mcp:latest sh -c "timeout 2 python3 -m farofino_mcp 2>&1 | head -5"
 	@echo "Testing tool availability..."
 	docker run --rm --entrypoint sh farofino-mcp:latest -c "slither --version && echo 'Slither: OK'"
-	docker run --rm --entrypoint sh farofino-mcp:latest -c "myth --version && echo 'Mythril: OK'"
 	@echo "Testing Aderyn (may not be available if cargo install failed)..."
 	docker run --rm --entrypoint sh farofino-mcp:latest -c "aderyn --version && echo 'Aderyn: OK' || echo 'Aderyn: Not available (expected if cargo install failed due to SSL issues)'"
 
 test: verify ## Run tests
 	@echo "Running health checks..."
 	docker run --rm --entrypoint python3 farofino-mcp:latest -c "import slither; print('Slither: OK')"
-	docker run --rm --entrypoint sh farofino-mcp:latest -c "myth --version 2>&1 | head -1"
 	@echo "Aderyn health check (may not be available)..."
 	docker run --rm --entrypoint sh farofino-mcp:latest -c "aderyn --version 2>&1 | head -1 || echo 'Aderyn not available'"
 

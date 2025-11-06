@@ -20,7 +20,7 @@ The Makefile was not aligned with the Python project version and was incorrect. 
 | Base images | `docker pull rust:1.75-slim`<br>`docker pull node:20-slim` | `docker pull python:3.12-slim` |
 | Docker Compose | `docker-compose build` | `docker compose build` |
 | Server verification | `node dist/index.js` | `python3 -m farofino_mcp` |
-| Tool checks | Only Slither and Mythril | Slither, Mythril, and Aderyn (validated) |
+| Tool checks | Only Slither | Slither and Aderyn (validated) |
 
 **All Makefile Commands Updated:**
 
@@ -51,7 +51,6 @@ FROM python:3.12-slim
 # Install system dependencies + curl
 # Install Python dependencies (mcp)
 # Install Slither (Python-based) ← Always works
-# Install Mythril (Python-based) ← Always works
 # Install project package
 # Install Aderyn via Cyfrinup (Rust-based) ← Always works (validated)
 # Setup non-root user
@@ -74,10 +73,9 @@ FROM python:3.12-slim
 
 ## Audit Tools Status
 
-All audit tools are bundled in the Docker image:
+All supported audit tools are bundled in the Docker image:
 
 - **Slither v0.10.0** (Python-based static analyzer)
-- **Mythril v0.24.8** (Python-based symbolic execution)
 - **Aderyn** (Rust-based static analyzer delivered via Cyfrinup)
 
 ## Technical Details
@@ -92,11 +90,11 @@ Expected build time: ~8-15 minutes (download of Python packages + Cyfrinup binar
 
 ### Image Size
 
-Expected size: ~1.5-2GB
+Expected size: ~1.4-1.6GB
 
 - Python 3.12 runtime: ~500MB
 - Cyfrinup-managed tooling and Aderyn binary: ~200-300MB
-- Audit tools (Slither, Mythril): ~200-400MB
+- Audit tools (Slither): ~200-300MB
 
 ## Verification
 
@@ -112,7 +110,6 @@ make verify
 # Expected output:
 # - Python MCP server starts ✓
 # - Slither available ✓
-# - Mythril available ✓
 # - Aderyn available ✓
 ```
 
@@ -138,7 +135,7 @@ All requirements from the problem statement have been addressed:
 
 ✅ **Aderyn is included (when possible)** - Dockerfile attempts installation with graceful failure handling
 
-✅ **All necessary components included** - Slither, Mythril, and Aderyn ship with every image
+✅ **All necessary components included** - Slither and Aderyn ship with every image
 
 ✅ **Comprehensive documentation** - Both in English and Portuguese
 
@@ -151,6 +148,5 @@ All requirements from the problem statement have been addressed:
 ## References
 
 - Slither: <https://github.com/crytic/slither>
-- Mythril: <https://github.com/ConsenSys/mythril>
 - Aderyn: <https://github.com/Cyfrin/aderyn>
 - MCP Protocol: <https://github.com/anthropics/mcp>

@@ -25,7 +25,7 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     --trusted-host pypi.org \
     --trusted-host pypi.python.org \
     --trusted-host files.pythonhosted.org \
-    slither-analyzer==0.10.0
+    slither-analyzer
 ```
 
 ### 3. SSL Certificate Chain Issues
@@ -46,13 +46,13 @@ RUN pip3 install --no-cache-dir --break-system-packages \
 
 ### 5. Dependency Conflicts
 
-**Error**: Incompatible versions of eth-* packages between Slither and Mythril
+**Issue**: The legacy symbolic execution tool introduced dependency conflicts with modern web3 libraries and has been discontinued upstream.
 
-**Solution**:
+**Resolution**:
 
-- Installed Slither and Mythril separately
-- Acknowledged that runtime warnings are acceptable
-- Removed version verification checks
+- Removed the deprecated symbolic execution tool from the Docker image and server tooling
+- Focused on Slither (static analysis) and Aderyn (Rust-based analyzer)
+- Simplified verification steps to cover only supported tools
 
 ### 6. npm Package Installation
 
@@ -76,12 +76,11 @@ RUN id -u 1000 >/dev/null 2>&1 || useradd -m -u 1000 mcp
 ## Build Time
 
 - Approximately 5-10 minutes depending on network speed
-- Separate pip installs for Slither and Mythril speed up dependency resolution
 
 ## Image Size
 
-- Final image: ~1.36GB
-- Includes: Node.js 20, Python 3.11, Slither, Mythril, build tools
+- Final image: ~1.2-1.3GB
+- Includes: Python 3.12 runtime, Slither (via pipx), Aderyn binary from Cyfrinup, and build tools
 
 ## Testing Commands
 

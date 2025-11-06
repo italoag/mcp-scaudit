@@ -1,6 +1,6 @@
 # Faro Fino - Smart Contract Audit MCP Server
 
-A Model Context Protocol (MCP) server for auditing smart contracts using industry-standard tools like Slither, Mythril, Aderyn, and custom pattern analysis.
+A Model Context Protocol (MCP) server for auditing smart contracts using industry-standard tools like Slither, Aderyn, and custom pattern analysis.
 
 ## Overview
 
@@ -9,7 +9,6 @@ This MCP server provides a unified interface for running multiple smart contract
 ## Features
 
 - **Slither Integration**: Static analysis framework for Solidity & Vyper
-- **Mythril Integration**: Symbolic execution analysis for vulnerability detection
 - **Aderyn Integration**: Rust-based static analyzer for Solidity
 - **Pattern Analysis**: Custom pattern-based security checks for common vulnerabilities
 - **Contract Reading**: Read and inspect contract source code
@@ -39,7 +38,7 @@ make build-retry  # Automatically handles network issues
 
 **Advantages:**
 
-- ✅ Aderyn, Slither, and Mythril pre-installed
+- ✅ Aderyn and Slither pre-installed
 - ✅ Consistent environment across all platforms
 - ✅ No dependency conflicts
 - ✅ Optimized slim image (~1.3-1.4GB)
@@ -83,12 +82,6 @@ pip install slither-analyzer
 ```bash
 curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash
 CYFRINUP_ONLY_INSTALL=aderyn cyfrinup
-```
-
-**Mythril:**
-
-```bash
-pip install mythril
 ```
 
 You can check which tools are installed using the `check_tools` command.
@@ -158,25 +151,7 @@ Run Aderyn static analysis on a smart contract.
 }
 ```
 
-#### 3. mythril_audit
-
-Run Mythril symbolic execution analysis.
-
-**Parameters:**
-
-- `contract_path` (required): Path to the contract file (.sol)
-- `execution_timeout` (optional): Maximum execution time in seconds
-
-**Example:** (replace `/path/to/MyContract.sol` with your actual file path)
-
-```json
-{
-  "contract_path": "/path/to/MyContract.sol",
-  "execution_timeout": 300
-}
-```
-
-#### 4. pattern_analysis
+#### 3. pattern_analysis
 
 Perform basic pattern-based security analysis.
 
@@ -201,7 +176,7 @@ Checks for:
 - `block.timestamp` manipulation risks
 - Potential reentrancy patterns
 
-#### 5. read_contract
+#### 4. read_contract
 
 Read and return the source code of a smart contract.
 
@@ -217,7 +192,7 @@ Read and return the source code of a smart contract.
 }
 ```
 
-#### 6. check_tools
+#### 5. check_tools
 
 Check which audit tools are installed and available.
 
@@ -335,7 +310,6 @@ Replace `/path/to/contract.sol` with the actual location of your Solidity file i
 
 5. **Run additional tools as needed:**
   - Aderyn for Rust-based analysis (pre-installed in the Docker image or via Cyfrinup)
-   - Mythril for symbolic execution
 
 ## Development
 
@@ -393,7 +367,6 @@ If you get permission errors when running audit tools:
 
 For large contracts or complex analysis:
 
-- Use the `execution_timeout` parameter with Mythril
 - Use `exclude_detectors` with Slither to skip certain checks
 - Run pattern analysis first for a quick overview
 

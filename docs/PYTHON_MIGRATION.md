@@ -6,7 +6,7 @@ The MCP Smart Contract Auditor has been rewritten from TypeScript/Node.js to Pyt
 
 ## Why Python?
 
-- **Native integration** with audit tools (Slither, Mythril) which are Python-based
+- **Native integration** with audit tools like Slither which are Python-based
 - **Simpler dependency management** for security analysis tools
 - **Better ecosystem alignment** with smart contract security tooling
 - **Improved maintainability** with Python's clarity and simplicity
@@ -159,7 +159,6 @@ All original functionality has been preserved:
 
 - ✅ `slither_audit` - Static analysis with Slither
 - ✅ `aderyn_audit` - Rust-based analysis with Aderyn
-- ✅ `mythril_audit` - Symbolic execution with Mythril
 - ✅ `pattern_analysis` - Basic pattern-based security checks
 - ✅ `read_contract` - Read contract source code
 - ✅ `check_tools` - Check available audit tools
@@ -228,7 +227,7 @@ pip install -r requirements.txt
 **Solution:** Install audit tools separately:
 
 ```bash
-pip install slither-analyzer mythril
+pip install slither-analyzer
 curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash
 CYFRINUP_ONLY_INSTALL=aderyn cyfrinup
 ```

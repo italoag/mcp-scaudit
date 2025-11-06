@@ -29,9 +29,8 @@ O projeto farofino-mcp é baseado em Python, mas o Makefile estava configurado i
 - Imagem não continha todos os componentes necessários
 
 - ✅ Instalação automatizada via Cyfrinup para provisionar o Aderyn sem depender diretamente do cargo/crates.io
-- ✅ Todas as ferramentas de auditoria agora configuradas e verificadas em tempo de build:
+- ✅ Ferramentas de auditoria agora configuradas e verificadas em tempo de build:
   - **Slither** (Python) - sempre disponível ✓
-  - **Mythril** (Python) - sempre disponível ✓
   - **Aderyn** (Rust via Cyfrinup) - sempre disponível ✓
 - ✅ Tratamento adequado de problemas de certificado SSL
 - ✅ Mensagens claras sobre status da instalação
@@ -40,15 +39,11 @@ O projeto farofino-mcp é baseado em Python, mas o Makefile estava configurado i
 
 ### Ferramentas Sempre Disponíveis
 
-1. **Slither** v0.10.0 (Python)
+1. **Slither** (Python)
    - Framework de análise estática para Solidity & Vyper
    - Instalado via pip com flags de SSL resilientes
 
-2. **Mythril** v0.24.8 (Python)
-   - Análise de execução simbólica para contratos Ethereum
-   - Instalado via pip com flags de SSL resilientes
-
-3. **Aderyn** (Rust)
+2. **Aderyn** (Rust)
    - Analisador estático baseado em Rust para Solidity
    - Instalado via [Cyfrinup](https://github.com/Cyfrin/up) dentro da imagem Docker
    - Disponível imediatamente para todos os usuários do container
@@ -78,7 +73,6 @@ Isto irá:
 
 - Testar inicialização do servidor MCP
 - Verificar disponibilidade do Slither ✓
-- Verificar disponibilidade do Mythril ✓
 - Verificar disponibilidade do Aderyn ✓
 
 ### Executar o Servidor
@@ -119,7 +113,7 @@ Use o comando `check_tools` do servidor MCP para verificar e registrar as versõ
 
 ✅ **Dockerfile inclui todos os componentes necessários**:
 
-- Slither e Mythril (sempre funcionais)
+- Slither (sempre funcional)
 - Aderyn provisionado via Cyfrinup (sem dependência de compilação local)
 - Ferramentas instaladas com verificação de versão durante o build
 

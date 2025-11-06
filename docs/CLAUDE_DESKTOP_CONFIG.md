@@ -20,7 +20,7 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 
 ### Option 1: Using Docker (Recommended - All Tools Pre-installed) 🐳
 
-**Best option for having all audit tools (Slither, Aderyn, Mythril) pre-installed:**
+**Best option for having all audit tools (Slither and Aderyn) pre-installed:**
 
 > Replace `/absolute/path/to/farofino-mcp` with the full path to this repository on **your host machine** (for example, `/Users/YourUser/projects/farofino-mcp`). Claude invokes the command from the host before Docker starts, so the path must exist locally, not inside the container.
 
@@ -68,7 +68,7 @@ This file shows how to configure the MCP Smart Contract Auditor for use with Cla
 
 **Benefits:**
 
-- ✅ All tools pre-installed (Slither, Aderyn, Mythril)
+- ✅ All tools pre-installed (Slither, Aderyn)
 - ✅ No dependency conflicts
 - ✅ Consistent environment
 - ✅ Easy updates with `docker-compose pull`
@@ -175,7 +175,6 @@ Update the `/path/to/...` placeholders with the actual contract locations on you
 
 - Slither: `pip install slither-analyzer`
 - Aderyn: `curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash && CYFRINUP_ONLY_INSTALL=aderyn cyfrinup`
-- Mythril: `pip install mythril`
 
 3. Ensure tools are in your system PATH
 

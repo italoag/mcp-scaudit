@@ -20,7 +20,6 @@ keywords = [
     "security",
     "slither",
     "aderyn",
-    "mythril",
     "blockchain",
     "ethereum",
     "solidity",
@@ -54,7 +53,6 @@ dev = [
 ]
 audit = [
     "slither-analyzer>=0.10.0",
-    "mythril>=0.24.0",
 ]
 
 [project.urls]
