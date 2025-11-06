@@ -315,7 +315,7 @@ async def check_tools() -> AuditResult:
 
 async def main():
     """Main entry point for the MCP server"""
-    server = Server("mcp-scaudit")
+    server = Server("farofino-mcp")
     
     # Define available tools
     tools = [

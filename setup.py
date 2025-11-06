@@ -1,14 +1,14 @@
 """
-Setup configuration for mcp-scaudit
+Setup configuration for farofino-mcp
 """
 from setuptools import setup, find_packages
 
 setup(
-    name="mcp-scaudit",
+    name="farofino-mcp",
     packages=find_packages(),
     entry_points={
         "console_scripts": [
-            "mcp-scaudit=mcp_scaudit.__main__:run",
+            "farofino-mcp=farofino_mcp.__main__:run",
         ],
     },
 )
