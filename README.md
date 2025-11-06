@@ -1,6 +1,6 @@
-# mcp-scaudit
+# Faro Fino - Smart Contract Audit MCP Server
 
-A Model Context Protocol (MCP) server for auditing smart contracts using industry-standard tools like Slither, Mythril, Aderyn (optional), and custom pattern analysis.
+A Model Context Protocol (MCP) server for auditing smart contracts using industry-standard tools like Slither, Mythril, Aderyn  and custom pattern analysis.
 
 ## Overview
 
@@ -10,7 +10,7 @@ This MCP server provides a unified interface for running multiple smart contract
 
 - **Slither Integration**: Static analysis framework for Solidity & Vyper
 - **Mythril Integration**: Symbolic execution analysis for vulnerability detection
-- **Aderyn Integration**: Rust-based static analyzer for Solidity (optional, not pre-installed in Docker)
+- **Aderyn Integration**: Rust-based static analyzer for Solidity
 - **Pattern Analysis**: Custom pattern-based security checks for common vulnerabilities
 - **Contract Reading**: Read and inspect contract source code
 - **Tool Management**: Check which audit tools are installed and get installation instructions
@@ -23,12 +23,12 @@ Use Docker for a hassle-free setup with all audit tools pre-installed:
 
 ```bash
 # Clone the repository
-git clone https://github.com/italoag/mcp-scaudit.git
-cd mcp-scaudit
+git clone https://github.com/italoag/farofino-mcp.git
+cd farofino-mcp
 
 # Build and run with Docker Compose
 docker-compose build
-docker-compose run --rm mcp-scaudit
+docker-compose run --rm farofino-mcp
 ```
 
 **If you encounter network timeout errors during build**, see [DOCKER_NETWORK_TIMEOUT.md](DOCKER_NETWORK_TIMEOUT.md) for quick fixes or use:
@@ -49,20 +49,20 @@ See [DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
 
 #### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.9 or higher
 - pip
 
 #### Install the MCP Server
 
 ```bash
-pip install mcp-scaudit
+pip install farofino-mcp
 ```
 
 Or install locally from source:
 
 ```bash
-git clone https://github.com/italoag/mcp-scaudit.git
-cd mcp-scaudit
+git clone https://github.com/italoag/farofino-mcp.git
+cd farofino-mcp
 pip install -r requirements.txt
 pip install -e .
 ```
@@ -94,10 +94,10 @@ You can check which tools are installed using the `check_tools` command.
 
 ```bash
 # Using Docker Compose
-docker-compose run --rm mcp-scaudit
+docker-compose run --rm farofino-mcp
 
 # Or with Docker directly
-docker run -i --rm -v $(pwd)/contracts:/contracts:ro mcp-scaudit:latest
+docker run -i --rm -v $(pwd)/contracts:/contracts:ro farofino-mcp:latest
 ```
 
 See [DOCKER.md](DOCKER.md) for detailed Docker usage and configuration.
@@ -107,12 +107,12 @@ See [DOCKER.md](DOCKER.md) for detailed Docker usage and configuration.
 #### Running the Server
 
 ```bash
-python3 -m mcp_scaudit
+python3 -m farofino_mcp
 ```
 
 Or if installed as a package:
 ```bash
-mcp-scaudit
+farofino-mcp
 ```
 
 ### Available Tools
@@ -230,8 +230,8 @@ Add this to your Claude Desktop configuration file:
   "mcpServers": {
     "scaudit": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "mcp-scaudit:latest"],
-      "cwd": "/path/to/mcp-scaudit"
+      "args": ["run", "-i", "--rm", "-v", "${PWD}/contracts:/contracts:ro", "farofino-mcp:latest"],
+      "cwd": "/path/to/farofino-mcp"
     }
   }
 }
@@ -246,8 +246,8 @@ Add this to your Claude Desktop configuration file:
   "mcpServers": {
     "scaudit": {
       "command": "docker-compose",
-      "args": ["run", "--rm", "mcp-scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "args": ["run", "--rm", "farofino-mcp"],
+      "cwd": "/path/to/farofino-mcp"
     }
   }
 }
@@ -260,8 +260,8 @@ Add this to your Claude Desktop configuration file:
   "mcpServers": {
     "scaudit": {
       "command": "python3",
-      "args": ["-m", "mcp_scaudit"],
-      "cwd": "/path/to/mcp-scaudit"
+      "args": ["-m", "farofino_mcp"],
+      "cwd": "/path/to/farofino-mcp"
     }
   }
 }
@@ -273,7 +273,7 @@ Add this to your Claude Desktop configuration file:
 {
   "mcpServers": {
     "scaudit": {
-      "command": "mcp-scaudit"
+      "command": "farofino-mcp"
     }
   }
 }
@@ -312,8 +312,8 @@ For more Docker configuration options, see [DOCKER.md](DOCKER.md).
 ### Building from Source
 
 ```bash
-git clone https://github.com/italoag/mcp-scaudit.git
-cd mcp-scaudit
+git clone https://github.com/italoag/farofino-mcp.git
+cd farofino-mcp
 pip install -r requirements.txt
 pip install -e .
 ```
@@ -322,17 +322,17 @@ pip install -e .
 
 ```bash
 # Run directly from source
-python3 -m mcp_scaudit
+python3 -m farofino_mcp
 
 # With debugging
-python3 -u -m mcp_scaudit
+python3 -u -m farofino_mcp
 ```
 
 ### Project Structure
 
 ```
-mcp-scaudit/
-├── mcp_scaudit/
+farofino-mcp/
+├── farofino_mcp/
 │   ├── __init__.py          # Package initialization
 │   └── __main__.py          # Main server implementation
 ├── pyproject.toml           # Python project configuration
