@@ -81,6 +81,7 @@ Currently, testing is done manually. To test your changes:
 ### Bug Reports
 
 If you find a bug, please open an issue with:
+
 - A clear description of the bug
 - Steps to reproduce
 - Expected behavior
@@ -90,6 +91,7 @@ If you find a bug, please open an issue with:
 ### Feature Requests
 
 We welcome feature requests! Please open an issue with:
+
 - A clear description of the feature
 - Use cases and benefits
 - Any implementation ideas you have
@@ -189,6 +191,7 @@ if "PATTERN_TO_CHECK" in content:
 ```
 
 Use severity levels:
+
 - `WARNING`: Security vulnerabilities
 - `INFO`: Best practices and recommendations
 - `ERROR`: Critical security issues
@@ -196,6 +199,7 @@ Use severity levels:
 ## Code Review Process
 
 All submissions require review. We'll review your PR for:
+
 - Code quality and style
 - Functionality and correctness
 - Documentation completeness
