@@ -4,7 +4,7 @@
 
 FROM python:3.12-slim
 
-LABEL maintainer="mcp-scaudit"
+LABEL maintainer="farofino-mcp"
 LABEL description="MCP Smart Contract Auditor with Slither and Mythril pre-installed. Aderyn can be added if needed."
 
 # Install system dependencies including Rust/Cargo for optional Aderyn installation
@@ -67,7 +67,7 @@ RUN pip3 install --no-cache-dir \
 # Both tools will work at runtime despite version warnings
 
 # Copy source code
-COPY mcp_scaudit ./mcp_scaudit
+COPY farofino_mcp ./farofino_mcp
 COPY examples ./examples
 COPY pyproject.toml ./
 COPY setup.py ./
@@ -96,7 +96,7 @@ ENV PYTHONUNBUFFERED=1
 ENV PATH="/home/mcp/.local/bin:/root/.cargo/bin:${PATH}"
 
 # Expose stdio for MCP communication
-ENTRYPOINT ["python3", "-m", "mcp_scaudit"]
+ENTRYPOINT ["python3", "-m", "farofino_mcp"]
 
 # Note: Slither and Mythril are always available
 # Aderyn may not be available if cargo install failed due to SSL issues
