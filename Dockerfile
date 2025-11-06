@@ -24,11 +24,17 @@ RUN --mount=type=cache,target=/var/lib/apt/lists \
     build-essential \
     curl \
     git \
+    python3-venv \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV CYFRIN_DIR=/opt/cyfrin
-ENV PATH="/opt/cyfrin/bin:/usr/local/bin:${PATH}"
+ENV PIPX_HOME=/opt/pipx
+ENV PIPX_BIN_DIR=/opt/pipx/bin
+ENV PATH="${PIPX_BIN_DIR}:/opt/cyfrin/bin:/root/.cargo/bin:/usr/local/bin:${PATH}"
+
+# Ensure Cyfrin and pipx directories exist for tooling installs
+RUN mkdir -p /opt/cyfrin/bin ${PIPX_HOME} ${PIPX_BIN_DIR}
 
 # Set working directory
 WORKDIR /app
@@ -42,30 +48,19 @@ RUN pip3 install --no-cache-dir \
     -r requirements.txt && \
     rm -rf ~/.cache/pip
 
-# Install Python-based audit tools (Slither and Mythril)
-# Adding --trusted-host flags to bypass SSL certificate verification issues
-# Installing separately to speed up dependency resolution
+# Install pipx to isolate CLI tooling environments
 RUN pip3 install --no-cache-dir \
     --trusted-host pypi.org \
     --trusted-host pypi.python.org \
     --trusted-host files.pythonhosted.org \
-    slither-analyzer==0.10.0 \
+    pipx \
     && rm -rf ~/.cache/pip
 
-RUN pip3 install --no-cache-dir \
-    --trusted-host pypi.org \
-    --trusted-host pypi.python.org \
-    --trusted-host files.pythonhosted.org \
-    mythril==0.24.8 \
-    && rm -rf ~/.cache/pip
-
-# Fix dependency conflicts between tools
-RUN pip3 install --no-cache-dir \
-    --trusted-host pypi.org \
-    --trusted-host pypi.python.org \
-    --trusted-host files.pythonhosted.org \
-    --upgrade hexbytes \
-    && rm -rf ~/.cache/pip
+# Install Slither and Mythril in isolated environments via pipx to avoid dependency conflicts
+RUN pipx install --pip-args="--no-cache-dir --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org" slither-analyzer && \
+    pipx install --pip-args="--no-cache-dir --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org" mythril && \
+    ln -sf ${PIPX_BIN_DIR}/slither /usr/local/bin/slither && \
+    ln -sf ${PIPX_BIN_DIR}/myth /usr/local/bin/myth
 
 # Note: Dependency conflicts between Slither and Mythril are expected
 # Both tools will work at runtime despite version warnings
@@ -86,6 +81,8 @@ RUN pip3 install --no-cache-dir \
 # Install Cyfrinup and provision the latest Aderyn build
 RUN curl -LsSf https://raw.githubusercontent.com/Cyfrin/up/main/install | bash && \
     CYFRINUP_ONLY_INSTALL=aderyn cyfrinup && \
+    install -Dm755 /root/.cargo/bin/aderyn /opt/cyfrin/bin/aderyn && \
+    if [ -f /root/.cargo/bin/aderyn-update ]; then install -Dm755 /root/.cargo/bin/aderyn-update /opt/cyfrin/bin/aderyn-update; else true; fi && \
     aderyn --version >/dev/null
 
 # Verify critical tooling is available
@@ -100,7 +97,7 @@ USER 1000
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV PATH="/opt/cyfrin/bin:/usr/local/bin:/home/mcp/.local/bin:${PATH}"
+ENV PATH="/opt/cyfrin/bin:/root/.cargo/bin:/usr/local/bin:/home/mcp/.local/bin:${PATH}"
 
 # Expose stdio for MCP communication
 ENTRYPOINT ["python3", "-m", "farofino_mcp"]
