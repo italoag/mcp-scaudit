@@ -11,6 +11,7 @@ File: `.github/workflows/release.yml`
 ### Trigger
 
 The workflow is triggered on:
+
 - **Push to main branch**: Automatically creates releases for commits to main
 - **Manual trigger**: Can be run manually via GitHub Actions UI
 
@@ -21,22 +22,24 @@ The workflow is triggered on:
 **Purpose:** Automatically determines the next version based on conventional commits.
 
 **How it works:**
+
 1. Fetches the latest Git tag (e.g., `v0.1.0`)
 2. Analyzes commit messages since the last tag
 3. Determines version bump:
    - **Major** (X.0.0): Breaking changes
      - Commit messages with `feat!:` or `BREAKING CHANGE:`
      - Example: `feat!: redesign API` → `v0.1.0` → `v1.0.0`
-   
+
    - **Minor** (0.X.0): New features
      - Commit messages with `feat:` or `feature:`
      - Example: `feat: add new audit tool` → `v0.1.0` → `v0.2.0`
-   
+
    - **Patch** (0.0.X): Fixes and other changes
      - All other commits
      - Example: `fix: correct bug` → `v0.1.0` → `v0.1.1`
 
 **Outputs:**
+
 - `new_version`: e.g., `0.2.0`
 - `new_tag`: e.g., `v0.2.0`
 - `changelog`: List of commits since last release
@@ -46,9 +49,10 @@ The workflow is triggered on:
 **Purpose:** Builds distributable Python packages.
 
 **Steps:**
+
 1. Sets up Python 3.12
 2. Installs build tools (`build`, `twine`)
-3. Updates version in `pyproject.toml` and `mcp_scaudit/__init__.py`
+3. Updates version in `pyproject.toml` and `farofino_mcp/__init__.py`
 4. Builds packages:
    - Source distribution (`.tar.gz`)
    - Wheel distribution (`.whl`)
@@ -56,14 +60,16 @@ The workflow is triggered on:
 6. Uploads packages as artifacts
 
 **Outputs:**
-- `mcp-scaudit-{version}.tar.gz`
-- `mcp_scaudit-{version}-py3-none-any.whl`
+
+- `farofino-mcp-{version}.tar.gz`
+- `farofino_mcp-{version}-py3-none-any.whl`
 
 #### 3. Build and Push Docker Image (`docker`)
 
 **Purpose:** Creates and publishes Docker images to GitHub Container Registry.
 
 **Steps:**
+
 1. Sets up Docker Buildx (for advanced build features)
 2. Logs in to GitHub Container Registry (ghcr.io)
 3. Extracts metadata for tagging:
@@ -74,10 +80,11 @@ The workflow is triggered on:
 5. Uses layer caching to speed up builds
 
 **Image Tags:**
-```
-ghcr.io/italoag/mcp-scaudit:latest
-ghcr.io/italoag/mcp-scaudit:v0.2.0
-ghcr.io/italoag/mcp-scaudit:0.2.0
+
+```bash
+ghcr.io/italoag/farofino-mcp:latest
+ghcr.io/italoag/farofino-mcp:v0.2.0
+ghcr.io/italoag/farofino-mcp:0.2.0
 ```
 
 #### 4. Create GitHub Release (`release`)
@@ -85,6 +92,7 @@ ghcr.io/italoag/mcp-scaudit:0.2.0
 **Purpose:** Creates a GitHub release with changelog and artifacts.
 
 **Steps:**
+
 1. Downloads Python package artifacts
 2. Creates a GitHub release with:
    - Tag name (e.g., `v0.2.0`)
@@ -101,18 +109,21 @@ ghcr.io/italoag/mcp-scaudit:0.2.0
 Use these commit message formats:
 
 #### Breaking Changes (Major version bump)
+
 ```bash
 git commit -m "feat!: redesign API interface"
 git commit -m "BREAKING CHANGE: remove deprecated methods"
 ```
 
 #### New Features (Minor version bump)
+
 ```bash
 git commit -m "feat: add support for new audit tool"
 git commit -m "feature: implement caching mechanism"
 ```
 
 #### Fixes and Other Changes (Patch version bump)
+
 ```bash
 git commit -m "fix: correct pattern matching bug"
 git commit -m "docs: update README"
@@ -141,6 +152,7 @@ git push origin main
 ```
 
 The pipeline will:
+
 1. Determine the new version
 2. Build Python packages
 3. Build and push Docker image
@@ -161,7 +173,7 @@ After a successful release:
 
 ### 1. GitHub Release
 
-- Visit: `https://github.com/italoag/mcp-scaudit/releases`
+- Visit: `https://github.com/italoag/farofino-mcp/releases`
 - Contains:
   - Version tag
   - Changelog
@@ -171,20 +183,23 @@ After a successful release:
 ### 2. Docker Images
 
 Pull the latest image:
+
 ```bash
-docker pull ghcr.io/italoag/mcp-scaudit:latest
+docker pull ghcr.io/italoag/farofino-mcp:latest
 ```
 
 Or a specific version:
+
 ```bash
-docker pull ghcr.io/italoag/mcp-scaudit:0.2.0
+docker pull ghcr.io/italoag/farofino-mcp:0.2.0
 ```
 
 ### 3. Python Packages
 
 Available as release assets, can be installed with:
+
 ```bash
-pip install https://github.com/italoag/mcp-scaudit/releases/download/v0.2.0/mcp-scaudit-0.2.0.tar.gz
+pip install https://github.com/italoag/farofino-mcp/releases/download/v0.2.0/farofino-mcp-0.2.0.tar.gz
 ```
 
 ## Configuration
@@ -192,6 +207,7 @@ pip install https://github.com/italoag/mcp-scaudit/releases/download/v0.2.0/mcp-
 ### Required Secrets
 
 The workflow uses built-in GitHub secrets:
+
 - `GITHUB_TOKEN`: Automatically provided by GitHub Actions
   - Used for creating releases
   - Used for pushing to GitHub Container Registry
@@ -199,10 +215,12 @@ The workflow uses built-in GitHub secrets:
 ### Optional Secrets
 
 For Docker Hub (if desired):
+
 - `DOCKERHUB_USERNAME`: Docker Hub username
 - `DOCKERHUB_TOKEN`: Docker Hub access token
 
 To add these:
+
 1. Go to repository "Settings"
 2. Click "Secrets and variables" → "Actions"
 3. Click "New repository secret"
@@ -256,8 +274,8 @@ twine check dist/*
 ### Test Docker build
 
 ```bash
-docker build -t mcp-scaudit:test .
-docker run -i --rm mcp-scaudit:test
+docker build -t farofino-mcp:test .
+docker run -i --rm farofino-mcp:test
 ```
 
 ## Best Practices
@@ -280,6 +298,7 @@ docker run -i --rm mcp-scaudit:test
 ## Support
 
 For issues with the CI/CD pipeline:
+
 1. Check workflow logs in Actions tab
 2. Review this documentation
-3. Open an issue: https://github.com/italoag/mcp-scaudit/issues
+3. Open an issue: <https://github.com/italoag/farofino-mcp/issues>

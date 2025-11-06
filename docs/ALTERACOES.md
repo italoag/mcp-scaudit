@@ -2,59 +2,51 @@
 
 ## Problema Identificado
 
-O projeto mcp-scaudit é baseado em Python, mas o Makefile estava configurado incorretamente para utilizar imagens base de Rust e Node.js. Além disso, o Aderyn (ferramenta de auditoria baseada em Rust) não estava sendo incluído na imagem Docker.
+O projeto farofino-mcp é baseado em Python, mas o Makefile estava configurado incorretamente para utilizar imagens base de Rust e Node.js. Além disso, o Aderyn (ferramenta de auditoria baseada em Rust) não estava sendo incluído na imagem Docker.
 
 ## Alterações Realizadas
 
 ### 1. Makefile
 
 **Problema Original:**
+
 - O target `pull-images` estava baixando imagens `rust:1.75-slim` e `node:20-slim`
 - Comandos usando `docker-compose` (sintaxe antiga)
 - Verificações não testavam corretamente o servidor Python
 
 **Correções:**
+
 - ✅ Alterado `pull-images` para baixar `python:3.12-slim` (imagem correta para projeto Python)
 - ✅ Atualizado todos os comandos `docker-compose` para `docker compose` (sintaxe v2)
-- ✅ Target `verify` agora testa corretamente o servidor MCP Python
-- ✅ Targets `verify` e `test` tratam Aderyn como opcional (caso instalação falhe por problemas de SSL)
+- ✅ Target `verify` agora testa corretamente o servidor MCP Python e a disponibilidade de todas as ferramentas (incluindo Aderyn)
 
 ### 2. Dockerfile
 
 **Problema Original:**
+
 - Comentários indicavam que Aderyn não era instalado devido a problemas de SSL
 - Não havia ferramentas Rust/Cargo disponíveis para compilar Aderyn
 - Imagem não continha todos os componentes necessários
 
-**Correções:**
-- ✅ Instalação de Rust/Cargo via rustup para suportar compilação do Aderyn
-- ✅ Tentativa de instalação do Aderyn com tratamento gracioso de falhas
-- ✅ Todas as ferramentas de auditoria agora configuradas:
+- ✅ Instalação automatizada via Cyfrinup para provisionar o Aderyn sem depender diretamente do cargo/crates.io
+- ✅ Ferramentas de auditoria agora configuradas e verificadas em tempo de build:
   - **Slither** (Python) - sempre disponível ✓
-  - **Mythril** (Python) - sempre disponível ✓
-  - **Aderyn** (Rust) - instalado quando possível ✓
+  - **Aderyn** (Rust via Cyfrinup) - sempre disponível ✓
 - ✅ Tratamento adequado de problemas de certificado SSL
 - ✅ Mensagens claras sobre status da instalação
 
 ## Ferramentas Incluídas
 
-### Sempre Disponíveis (Python)
+### Ferramentas Sempre Disponíveis
 
-1. **Slither** v0.10.0
+1. **Slither** (Python)
    - Framework de análise estática para Solidity & Vyper
-   - Instalação via pip sempre funciona
+   - Instalado via pip com flags de SSL resilientes
 
-2. **Mythril** v0.24.8
-   - Análise de execução simbólica para contratos Ethereum
-   - Instalação via pip sempre funciona
-
-### Opcionalmente Disponível (Rust)
-
-3. **Aderyn**
+2. **Aderyn** (Rust)
    - Analisador estático baseado em Rust para Solidity
-   - Instalado via `cargo install aderyn`
-   - Pode não estar disponível em ambientes com restrições de SSL
-   - Pode ser instalado manualmente após a construção se necessário
+   - Instalado via [Cyfrinup](https://github.com/Cyfrin/up) dentro da imagem Docker
+   - Disponível imediatamente para todos os usuários do container
 
 ## Como Usar
 
@@ -78,10 +70,10 @@ make verify
 ```
 
 Isto irá:
+
 - Testar inicialização do servidor MCP
 - Verificar disponibilidade do Slither ✓
-- Verificar disponibilidade do Mythril ✓
-- Verificar disponibilidade do Aderyn (opcional)
+- Verificar disponibilidade do Aderyn ✓
 
 ### Executar o Servidor
 
@@ -93,29 +85,11 @@ make run
 
 ### Sobre o Aderyn
 
-O Aderyn é uma ferramenta baseada em Rust que requer compilação durante a construção da imagem Docker. Em alguns ambientes (CI/CD, redes corporativas), a instalação pode falhar devido a:
-
-- Problemas com certificados SSL
-- Restrições de rede
-- Proxies com inspeção SSL
-
-**Isto é esperado e não é um erro crítico.** As ferramentas principais (Slither e Mythril) estarão sempre disponíveis e funcionais.
-
-### Instalação Manual do Aderyn
-
-Se o Aderyn não estiver disponível na imagem construída, você pode instalá-lo manualmente:
-
-```bash
-# Entrar no container como root
-docker run --rm -it --entrypoint /bin/bash --user root mcp-scaudit:latest
-
-# Dentro do container, instalar Aderyn
-cargo install aderyn
-```
+O Aderyn agora é instalado durante o build através do Cyfrinup, que baixa o binário oficial diretamente do repositório da Cyfrin. Isso evita problemas de compilação e garante que a versão mais recente esteja disponível na imagem final. Caso seu ambiente bloqueie downloads externos, utilize um proxy confiável ou faça o pré-download do script do Cyfrinup.
 
 ### Verificar Ferramentas Disponíveis
 
-Use o comando `check_tools` do servidor MCP para verificar quais ferramentas estão disponíveis em tempo de execução.
+Use o comando `check_tools` do servidor MCP para verificar e registrar as versões disponíveis em tempo de execução.
 
 ## Comandos do Makefile
 
@@ -138,11 +112,12 @@ Use o comando `check_tools` do servidor MCP para verificar quais ferramentas est
 ✅ **Makefile agora está aderente ao projeto Python** - usa `python:3.12-slim` ao invés de imagens Rust/Node
 
 ✅ **Dockerfile inclui todos os componentes necessários**:
-- Rust/Cargo para compilar Aderyn
-- Slither e Mythril (sempre funcionais)
-- Aderyn (quando ambiente permite instalação)
 
-✅ **Tratamento robusto de erros** - falhas na instalação do Aderyn não impedem uso das outras ferramentas
+- Slither (sempre funcional)
+- Aderyn provisionado via Cyfrinup (sem dependência de compilação local)
+- Ferramentas instaladas com verificação de versão durante o build
+
+✅ **Tratamento robusto de erros** - logs claros em caso de falha no download do Cyfrinup ou das ferramentas, com instruções de retry
 
 ✅ **Comandos atualizados** - sintaxe Docker Compose v2
 

@@ -1,13 +1,13 @@
-# Contributing to MCP Smart Contract Auditor
+# Contributing to Faro Fino MCP Smart Contract Auditor
 
 Thank you for your interest in contributing to the MCP Smart Contract Auditor! This document provides guidelines and information for contributors.
 
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/mcp-scaudit.git`
+2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/farofino-mcp.git`
 3. Install dependencies: `pip install -r requirements.txt`
-4. Run the server: `python3 -m mcp_scaudit`
+4. Run the server: `python3 -m farofino_mcp`
 
 ## Development Setup
 
@@ -21,8 +21,8 @@ Thank you for your interest in contributing to the MCP Smart Contract Auditor! T
 ### Project Structure
 
 ```
-mcp-scaudit/
-├── mcp_scaudit/
+farofino-mcp/
+├── farofino_mcp/
 │   ├── __init__.py       # Package initialization
 │   └── __main__.py       # Main server implementation
 ├── examples/             # Example contracts for testing
@@ -38,31 +38,31 @@ mcp-scaudit/
 ### Making Changes
 
 1. Create a new branch: `git checkout -b feature/your-feature-name`
-2. Make your changes in the `mcp_scaudit/` directory
-3. Test your changes: `python3 -m mcp_scaudit`
-4. Format your code: `black mcp_scaudit/` (optional)
+2. Make your changes in the `farofino_mcp/` directory
+3. Test your changes: `python3 -m farofino_mcp`
+4. Format your code: `black farofino_mcp/` (optional)
 5. Commit your changes with clear, descriptive messages
 
 ### Development Commands
 
 ```bash
 # Run the server
-python3 -m mcp_scaudit
+python3 -m farofino_mcp
 
 # Format code (optional but recommended)
 pip install black
-black mcp_scaudit/
+black farofino_mcp/
 
 # Type checking (optional but recommended)
 pip install mypy
-mypy mcp_scaudit/
+mypy farofino_mcp/
 ```
 
 ### Testing
 
 Currently, testing is done manually. To test your changes:
 
-1. Run the server: `python3 -m mcp_scaudit`
+1. Run the server: `python3 -m farofino_mcp`
 2. Test with MCP protocol messages via stdin/stdout
 3. Test with example contracts in the `examples/` directory
 4. Test specific functions by importing them in a Python shell
@@ -81,6 +81,7 @@ Currently, testing is done manually. To test your changes:
 ### Bug Reports
 
 If you find a bug, please open an issue with:
+
 - A clear description of the bug
 - Steps to reproduce
 - Expected behavior
@@ -90,6 +91,7 @@ If you find a bug, please open an issue with:
 ### Feature Requests
 
 We welcome feature requests! Please open an issue with:
+
 - A clear description of the feature
 - Use cases and benefits
 - Any implementation ideas you have
@@ -130,7 +132,7 @@ We welcome pull requests for:
 
 To add a new audit tool integration:
 
-1. Add a new async function in `mcp_scaudit/__main__.py` (e.g., `run_new_tool`)
+1. Add a new async function in `farofino_mcp/__main__.py` (e.g., `run_new_tool`)
 2. Add the tool to the `tools` list in the `main()` function
 3. Add a case in the `call_tool` handler
 4. Update the `check_tools` function to include the new tool
@@ -189,6 +191,7 @@ if "PATTERN_TO_CHECK" in content:
 ```
 
 Use severity levels:
+
 - `WARNING`: Security vulnerabilities
 - `INFO`: Best practices and recommendations
 - `ERROR`: Critical security issues
@@ -196,6 +199,7 @@ Use severity levels:
 ## Code Review Process
 
 All submissions require review. We'll review your PR for:
+
 - Code quality and style
 - Functionality and correctness
 - Documentation completeness

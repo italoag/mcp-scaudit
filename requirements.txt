@@ -3,4 +3,3 @@ mcp>=1.0.0
 
 # Optional audit tools (can be installed separately)
 # slither-analyzer>=0.10.0
-# mythril>=0.24.0

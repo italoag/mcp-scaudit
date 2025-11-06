@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mcp-scaudit"
+name = "farofino-mcp"
 version = "0.1.0"
 description = "A Model Context Protocol (MCP) server for auditing smart contracts using Slither, Aderyn, and other tools"
 readme = "README.md"
 requires-python = ">=3.8"
 license = "Apache-2.0"
 authors = [
-    {name = "mcp-scaudit contributors"}
+    {name = "Italo A. G." , email = "italoamorim@gmail.com"},
 ]
 keywords = [
     "mcp",
@@ -20,7 +20,6 @@ keywords = [
     "security",
     "slither",
     "aderyn",
-    "mythril",
     "blockchain",
     "ethereum",
     "solidity",
@@ -54,22 +53,21 @@ dev = [
 ]
 audit = [
     "slither-analyzer>=0.10.0",
-    "mythril>=0.24.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/italoag/mcp-scaudit"
-Repository = "https://github.com/italoag/mcp-scaudit"
-Issues = "https://github.com/italoag/mcp-scaudit/issues"
+Homepage = "https://github.com/italoag/farofino-mcp"
+Repository = "https://github.com/italoag/farofino-mcp"
+Issues = "https://github.com/italoag/farofino-mcp/issues"
 
 [project.scripts]
-mcp-scaudit = "mcp_scaudit.__main__:run"
+farofino-mcp = "farofino_mcp.__main__:run"
 
 [tool.setuptools]
-packages = ["mcp_scaudit"]
+packages = ["farofino_mcp"]
 
 [tool.setuptools.package-data]
-mcp_scaudit = ["py.typed"]
+farofino_mcp = ["py.typed"]
 
 [tool.black]
 line-length = 100

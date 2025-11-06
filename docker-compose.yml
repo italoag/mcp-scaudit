@@ -1,5 +1,5 @@
 services:
-  mcp-scaudit:
+  farofino-mcp:
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,8 +8,8 @@ services:
         - BUILDKIT_INLINE_CACHE=1
       # Add network mode for better connectivity
       network: host
-    image: mcp-scaudit:latest
-    container_name: mcp-scaudit
+    image: farofino-mcp:latest
+    container_name: farofino-mcp
     stdin_open: true
     tty: true
     volumes:
@@ -20,16 +20,16 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     # For interactive use with stdio
-    command: python3 -m mcp_scaudit
+    command: python3 -m farofino_mcp
     restart: unless-stopped
 
   # Development version with hot reload
-  mcp-scaudit-dev:
+  farofino-mcp-dev:
     build:
       context: .
       dockerfile: Dockerfile
-    image: mcp-scaudit:dev
-    container_name: mcp-scaudit-dev
+    image: farofino-mcp:dev
+    container_name: farofino-mcp-dev
     stdin_open: true
     tty: true
     volumes:
@@ -38,11 +38,11 @@ services:
     working_dir: /app
     environment:
       - PYTHONUNBUFFERED=1
-    command: python3 -m mcp_scaudit
+    command: python3 -m farofino_mcp
     restart: unless-stopped
     profiles:
       - dev
 
 networks:
   default:
-    name: mcp-scaudit-network
+    name: farofino-mcp-network
