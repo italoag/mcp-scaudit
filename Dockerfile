@@ -81,8 +81,11 @@ RUN pip3 install --no-cache-dir \
 
 # Optional: Install Aderyn (may fail in environments with SSL cert issues)
 # If installation fails, Aderyn can be installed later with: cargo install aderyn
-RUN cargo install aderyn || \
-    echo "WARNING: Aderyn installation failed. You can install it manually later with 'cargo install aderyn'"
+# Install Aderyn with reproducible builds and make it available to all users
+RUN cargo install --locked --root /usr/local aderyn
+
+# Verify critical tooling is available
+RUN slither --version && myth --version && aderyn --version
 
 # Create a non-root user (or use existing user if UID 1000 exists)
 RUN id -u 1000 >/dev/null 2>&1 || useradd -m -u 1000 mcp && \
@@ -93,7 +96,7 @@ USER 1000
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV PATH="/home/mcp/.local/bin:/root/.cargo/bin:${PATH}"
+ENV PATH="/usr/local/bin:/home/mcp/.local/bin:${PATH}"
 
 # Expose stdio for MCP communication
 ENTRYPOINT ["python3", "-m", "farofino_mcp"]
