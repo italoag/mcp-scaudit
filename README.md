@@ -30,7 +30,7 @@ docker-compose build
 docker-compose run --rm farofino-mcp
 ```
 
-**If you encounter network timeout errors during build**, see [DOCKER_NETWORK_TIMEOUT.md](DOCKER_NETWORK_TIMEOUT.md) for quick fixes or use:
+**If you encounter network timeout errors during build**, see [DOCKER_NETWORK_TIMEOUT.md](docs/DOCKER_NETWORK_TIMEOUT.md) for quick fixes or use:
 
 ```bash
 make build-retry  # Automatically handles network issues
@@ -38,12 +38,12 @@ make build-retry  # Automatically handles network issues
 
 **Advantages:**
 
-- ✅ Aderyn and Slither pre-installed
-- ✅ Consistent environment across all platforms
-- ✅ No dependency conflicts
-- ✅ Optimized slim image (~1.3-1.4GB)
+- Aderyn and Slither pre-installed
+- Consistent environment across all platforms
+- No dependency conflicts
+- Optimized slim image (~1.3-1.4GB)
 
-See [DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
+See [docs/DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
 
 ### Option 2: pip Installation
 
@@ -98,7 +98,7 @@ docker-compose run --rm farofino-mcp
 docker run -i --rm -v $(pwd)/contracts:/contracts:ro farofino-mcp:latest
 ```
 
-See [DOCKER.md](DOCKER.md) for detailed Docker usage and configuration.
+See [DOCKER.md](docs/DOCKER.md) for detailed Docker usage and configuration.
 
 ### Without Docker
 
@@ -278,7 +278,7 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
-For more Docker configuration options, see [DOCKER.md](DOCKER.md).
+For more Docker configuration options, see [docs/DOCKER.md](DOCKER.md).
 
 ## Example Workflow
 
