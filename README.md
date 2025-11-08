@@ -16,7 +16,7 @@ This MCP server provides a unified interface for running multiple smart contract
 
 ## Installation
 
-### Option 1: Docker (Recommended - All Tools Pre-installed) 🐳
+### Option 1: Docker (Recommended - All Tools Pre-installed)
 
 Use Docker for a hassle-free setup with all audit tools pre-installed:
 
@@ -43,7 +43,7 @@ make build-retry  # Automatically handles network issues
 - No dependency conflicts
 - Optimized slim image (~1.3-1.4GB)
 
-See [docs/DOCKER.md](DOCKER.md) for detailed Docker setup and configuration.
+See [DOCKER.md](docs/DOCKER.md) for detailed Docker setup and configuration.
 
 ### Option 2: pip Installation
 
@@ -278,7 +278,7 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
-For more Docker configuration options, see [docs/DOCKER.md](DOCKER.md).
+For more Docker configuration options, see [DOCKER.md](docs/DOCKER.md).
 
 ## Example Workflow
 
